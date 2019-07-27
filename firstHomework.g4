@@ -1,8 +1,28 @@
 grammar firstHomework;
 
-input : ONE;
+/*
+input : COMMAND OPERAND* NEWLINE EOF;
+COMMAND : .*;
+OPERAND : .*;
+NEWLINE : '¥n';
+*/
+input : (command operand* NEWLINE)* EOF;
 
-ONE : A;
+command : CHARS;
+operand : CHARS         // hoge (variable)
+        | DEVICE        // DM100
+        ;
+
+
+CHARS : [A-Za-z]+ ;
+INT     : [0-9]+ ;
+
+NEWLINE : [\r\n]+ ;
+WS : [ ¥t] -> skip;
+
+
+DEVICE : CHARS INT;
+
 fragment A: [Aa];
 fragment B: [Bb];
 fragment C: [Cc];

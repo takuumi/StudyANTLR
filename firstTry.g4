@@ -25,6 +25,11 @@ why doesnt work?
 input3 : .* EOF;
 WSS : ' ';
 
+// これは動作するが、スペースで区切る、というのをどこで?
+input4 : IDENTIFIER+;
+IDENTIFIER: [A-Za-z]+;
+
+
 /*
 // why missing A?
 input : A;
@@ -32,7 +37,15 @@ fragment A: [Aa];
 */
 
 // => 字句の定義がないから
-input : ONE;
+input5 : ONE;
 
 ONE : A;
 fragment A: [Aa];
+
+/*
+LINE_COMMENT
+    : '//' ~('\n'|'\r')* ('\r\n' | '\r' | '\n')
+        { $channel=HIDDEN; } //※またはSkip();
+    ；
+*/
+
