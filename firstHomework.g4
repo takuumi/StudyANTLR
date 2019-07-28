@@ -27,6 +27,7 @@ CONST_NUMBER : CONST_DEC          // #10
              ;
 DEVICE : CHARS INT          // DM10
        | '@' CHARS INT      // @MR0
+       | CHARS INT '_' INT   // DM01_9
        ;
 CONST_DEC : '#' INT;        // #10
 CONST_HEX : '$' INT         // $10
