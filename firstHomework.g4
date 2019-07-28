@@ -6,16 +6,13 @@ command : UNIT_CMD     // U_SRDBUF
         | CHARS        // LD
         ;
 
-
-operand : CHARS         // hoge (variable)
-        | indexDevice   // DM10 : z1
-        | DEVICE        // DM100
-        | CONST_NUMBER        // #10, 10, $10
+operand :
+          operand ':' device   // DM10 : z1
+        | operand '.' const_number   // DM10.1
+        | device               // DM100
+        | const_number        // #10, 10, $10
+        | CHARS                // hoge (variables)
         ;
-
-indexDevice : DEVICE ':' ZINDEX       // DM10 : Z1
-            | DEVICE ':' NUMBER       // DM10 : #19
-            ;
 
 CHARS : [A-Za-z]+ ;
 INT     : [0-9]+ ;
@@ -30,17 +27,17 @@ UNIT_CMD : 'U_' CHARS;
 
 // operand
 
-CONST_NUMBER : CONST_DEC          // #10
+const_number : CONST_DEC          // #10
              | CONST_HEX          // $10
              | INT                // 10
              ;
-DEVICE : CHARS INT;         // DM10
+device : CHARS INT          // DM10
+       | '@' CHARS INT      // @MR0
+       ;
 CONST_DEC : '#' INT;        // #10
 CONST_HEX : '$' INT         // $10
           | '$' [A-Fa-f]    // $Aa
           ;
-
-ZINDEX : Z INT;             // z10, Z10
 
 
 
