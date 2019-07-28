@@ -2,49 +2,58 @@ grammar firstHomework;
 
 input : (command operand* NEWLINE)* EOF;
 
-command : UNIT_CMD     // U_SRDBUF
+command :
+          command DOT suffix    // LD.U
+        | UNIT_CMD     // U_SRDBUF
         | CHARS        // LD
         ;
 
 operand :
-          operand ':' device   // DM10 : z1
-        | operand '.' const_number   // DM10.1
-        | device               // DM100
-        | const_number        // #10, 10, $10
+          operand CORON DEVICE   // DM10 : z1
+        | operand DOT CONST_NUMBER   // DM10.1
+        | DEVICE               // DM100
+        | CONST_NUMBER        // #10, 10, $10
         | CHARS                // hoge (variables)
         ;
 
-CHARS : [A-Za-z]+ ;
-INT     : [0-9]+ ;
-
-NEWLINE : [\r\n]+ ;
-WS : [ ¥t] -> skip;
 
 // command
 UNIT_CMD : 'U_' CHARS;
 
-
-
 // operand
-
-const_number : CONST_DEC          // #10
+CONST_NUMBER : CONST_DEC          // #10
              | CONST_HEX          // $10
              | INT                // 10
              ;
-device : CHARS INT          // DM10
+DEVICE : CHARS INT          // DM10
        | '@' CHARS INT      // @MR0
        ;
 CONST_DEC : '#' INT;        // #10
 CONST_HEX : '$' INT         // $10
-          | '$' [A-Fa-f]    // $Aa
+          | '$' [A-Fa-f]+    // $Aa
           ;
 
 
+CORON : ':';
+DOT   : '.';
+suffix : 'L'
+       | 'D'
+       | 'U'
+       | 'F'
+       | 'S'
+       ;
 
+CHARS : [A-Za-z]+ ;
+INT : SIGN? DIGIT+;
+FLOAT : SIGN? (REAL | EXP) ;
 
+NEWLINE : [\r\n]+ ;
+WS : [ ¥t] -> skip;
 
-
-
+fragment REAL : DIGIT+ DOT DIGIT+;
+fragment EXP : REAL E SIGN? DIGIT+;
+fragment DIGIT : [0-9];
+fragment SIGN : [+-];
 fragment A: [Aa];
 fragment B: [Bb];
 fragment C: [Cc];

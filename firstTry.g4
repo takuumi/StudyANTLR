@@ -56,3 +56,17 @@ WSS : ' ';
 // これは動作するが、スペースで区切る、というのをどこで?
 input4 : IDENTIFIER+;
 IDENTIFIER: [A-Za-z]+;
+
+input6 : IDENTIFIER '.' SUFFIX;
+SUFFIX : L
+       | D
+       ;
+
+// why doesnt work?
+input7 : IDENTIFIER '.' suffix;
+suffix : 'L'
+       | 'D'
+       ;
+
+fragment D: [Dd];
+fragment L: [Ll];
