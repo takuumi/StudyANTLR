@@ -1,18 +1,21 @@
 grammar firstHomework;
 
-/*
-input : COMMAND OPERAND* NEWLINE EOF;
-COMMAND : .*;
-OPERAND : .*;
-NEWLINE : '¥n';
-*/
 input : (command operand* NEWLINE)* EOF;
 
-command : CHARS;
-operand : CHARS         // hoge (variable)
-        | DEVICE        // DM100
+command : UNIT_CMD     // U_SRDBUF
+        | CHARS        // LD
         ;
 
+
+operand : CHARS         // hoge (variable)
+        | indexDevice   // DM10 : z1
+        | DEVICE        // DM100
+        | CONST_NUMBER        // #10, 10, $10
+        ;
+
+indexDevice : DEVICE ':' ZINDEX       // DM10 : Z1
+            | DEVICE ':' NUMBER       // DM10 : #19
+            ;
 
 CHARS : [A-Za-z]+ ;
 INT     : [0-9]+ ;
@@ -20,8 +23,30 @@ INT     : [0-9]+ ;
 NEWLINE : [\r\n]+ ;
 WS : [ ¥t] -> skip;
 
+// command
+UNIT_CMD : 'U_' CHARS;
 
-DEVICE : CHARS INT;
+
+
+// operand
+
+CONST_NUMBER : CONST_DEC          // #10
+             | CONST_HEX          // $10
+             | INT                // 10
+             ;
+DEVICE : CHARS INT;         // DM10
+CONST_DEC : '#' INT;        // #10
+CONST_HEX : '$' INT         // $10
+          | '$' [A-Fa-f]    // $Aa
+          ;
+
+ZINDEX : Z INT;             // z10, Z10
+
+
+
+
+
+
 
 fragment A: [Aa];
 fragment B: [Bb];

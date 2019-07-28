@@ -21,13 +21,6 @@ why doesnt work?
 // => 字句の定義がないから
 // parser: Match any single token except for the end of file token. The “dot” operator is called the wildcard.
 // lexser:The dot is a single-character wildcard that matches any single character.
-// スペースを１つの構文木の中に入れるには？
-input3 : .* EOF;
-WSS : ' ';
-
-// これは動作するが、スペースで区切る、というのをどこで?
-input4 : IDENTIFIER+;
-IDENTIFIER: [A-Za-z]+;
 
 
 /*
@@ -42,10 +35,24 @@ input5 : ONE;
 ONE : A;
 fragment A: [Aa];
 
-/*
+/* memo
 LINE_COMMENT
     : '//' ~('\n'|'\r')* ('\r\n' | '\r' | '\n')
         { $channel=HIDDEN; } //※またはSkip();
     ；
 */
 
+
+// []と’’の違いは？
+/*
+UNIT_CMD : [U_] CHARS;
+UNIT_CMD : 'U_' CHARS;
+*/
+
+// スペースを１つの構文木の中に入れるには？
+input3 : .* EOF;
+WSS : ' ';
+
+// これは動作するが、スペースで区切る、というのをどこで?
+input4 : IDENTIFIER+;
+IDENTIFIER: [A-Za-z]+;
