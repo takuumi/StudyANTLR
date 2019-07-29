@@ -5,33 +5,50 @@ input : (command operand* NEWLINE)* EOF;
 command :
           command DOT suffix    // LD.U
         | UNIT_CMD     // U_SRDBUF
+        | CHARS CALC_SYM    // LD=
         | CHARS        // LD
         ;
 
 operand :
-          operand CORON DEVICE   // DM10 : z1
-        | operand DOT CONST_NUMBER   // DM10.1
-        | DEVICE               // DM100
-        | CONST_NUMBER        // #10, 10, $10
-        | CHARS                // hoge (variables)
+          operand CORON DEVICE      // DM10 : z1
+        | operand DOT CONST_NUMBER  // DM10.1
+        | DEVICE                    // DM100
+        | CONST_NUMBER              // #10, 10, $10
+        | UNKNOWN                   // ???
+        | CHARS                     // hoge (variables)
         ;
 
 
 // command
 UNIT_CMD : 'U_' CHARS;
+CALC_SYM : '='
+         | '&'
+         | '^'
+         | '+'
+         | '-'
+         | '*'
+         | '/'
+         ;
 
 // operand
 CONST_NUMBER : CONST_DEC          // #10
              | CONST_HEX          // $10
              | INT                // 10
              ;
-DEVICE : CHARS INT          // DM10
+
+DEVICE :
+       | '*' DEVICE
        | '@' CHARS INT      // @MR0
        | CHARS INT '_' INT   // DM01_9
+       | CHARS INT          // DM10
        ;
-CONST_DEC : '#' INT;        // #10
-CONST_HEX : '$' INT         // $10
-          | '$' [A-Fa-f]+    // $Aa
+CONST_DEC : '#' INT        // #10
+          | 'K' INT        // K10
+          ;
+
+// todo 桁指定
+CONST_HEX : '$' [0-9A-Fa-f]+         // $10
+          | 'H' [0-9A-Fa-f]+         //H10
           ;
 
 
@@ -43,6 +60,8 @@ suffix : 'L'
        | 'F'
        | 'S'
        ;
+
+UNKNOWN : '???';
 
 CHARS : [A-Za-z]+ ;
 INT : SIGN? DIGIT+;
