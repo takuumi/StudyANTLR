@@ -1,48 +1,48 @@
 grammar firstHomeworkRefactor;
 
-input : oneline* EOF;
-oneline : command WS* (operand WS*)* EOL*;
+input : oneline*;
+//oneline : command WS* (operand WS*)* (EOL+ | EOF);
+oneline : command (WS+ operand WS*)* (EOL+ | EOF);
 
 command :
-          command SUFFIX            // LD.U
-        | UNIT_CMD                  // U_SRDBUF
-        | CHARS OPERATOR            // LD=
-        | CHARS                     // LD
+          command SUFFIX              // LD.U
+        | IDENTIFIER OPERATOR*        // U_SRDBUF, LD, LD=, CAL<<
         ;
 
 operand :
-          device                    // DM100
         | wordbit                   // DM10.1
-        | operand COLON device      // DM10:z1, @DM10:1
+        | operand COLON index       // DM10:z1, DM10#1
         | local                     // @DM10, @DM10.1
-        | indirect                  // *DM10
-        | unitdev                   // DM10_9
+        | indirect                  // *DM109
         | const_number              // #10, 10, $10
+        | const_string              // "hoge"
         | UNKNOWN                   // ???
-        | CHARS                     // hoge (variables)
+        | IDENTIFIER                // hoge (variables), _MAIN, DM100, DM10_0
         ;
 
-device : CHARS INT;
-wordbit : device DOT INT;
-indirect : ASTRISK device | ASTRISK ATMARK device;
-local   : ATMARK device | ATMARK wordbit;
-unitdev : device UNDERLINE INT;
+index : IDENTIFIER | const_number;
+wordbit : IDENTIFIER WORDBIT;
+indirect : ASTRISK IDENTIFIER | ASTRISK ATMARK IDENTIFIER;
+local   : ATMARK IDENTIFIER | ATMARK wordbit;
 const_number : CONST_DEC          // #10
              | CONST_HEX          // $10
              | INT                // 10
              ;
 
-// command
-UNIT_CMD : 'U_' CHARS;
+const_string : '"' IDENTIFIER '"';
+
 OPERATOR : '='
          | '&'
          | '^'
          | '+'
          | '-'
-//         | '*'                     // *@D10 が動かない。
+         | '*'                     // *@D10 が動かない。
          | '/'
+         | '<'
+         | '>'
          ;
-SUFFIX : DOT CHARS;
+SUFFIX : DOT IDENTIFIER;
+WORDBIT : DOT INT;
 
 // operand
 COLON : ':';
@@ -55,22 +55,26 @@ UNKNOWN : '???';
 EOL : '\r' | '\n';
 
                                      // 字句なのか、構文なのか。
-CONST_DEC : '#' INT               // #10
-          | 'K' INT               // K10
+CONST_DEC : '#' INT             // #10
+          | K INT               // K10
+          | '#' FLOAT           // #1.23
+          | K FLOAT             // #1.23
+          | INT
+          | FLOAT
           ;
 
 // todo 桁指定
 CONST_HEX : '$' [0-9A-Fa-f]+      // $10
-          | 'H' [0-9A-Fa-f]+      // H10
+          | H [0-9A-Fa-f]+        // H10
           ;
 
 
-CHARS : [A-Za-z]+ ;
+IDENTIFIER : [A-Za-z0-9_]+ ;
 INT : SIGN? DIGIT+;
+FLOAT : SIGN? (REAL | EXP) ;
 
-//FLOAT : SIGN? (REAL | EXP) ;        // DM2000.1が動かない
-//fragment REAL : DIGIT+ DOT DIGIT+;
-//fragment EXP : REAL E SIGN? DIGIT+;
+fragment REAL : DIGIT* DOT DIGIT*;
+fragment EXP : REAL E SIGN? DIGIT+;
 fragment DIGIT : [0-9];
 fragment SIGN : [+-];
 
