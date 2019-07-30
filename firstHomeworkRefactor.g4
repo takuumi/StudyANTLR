@@ -71,7 +71,7 @@ CONST_HEX : '$' [0-9A-Fa-f]+      // $10
 
 IDENTIFIER : [A-Za-z0-9_]+ ;
 INT : SIGN? DIGIT+;
-FLOAT : SIGN? (REAL | EXP) ;
+FLOAT : SIGN? (REAL | EXP | WORDBIT) ;      // こういう事かと思ったのだけど・・・
 
 fragment REAL : DIGIT* DOT DIGIT*;
 fragment EXP : REAL E SIGN? DIGIT+;
