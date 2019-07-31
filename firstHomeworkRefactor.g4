@@ -7,6 +7,7 @@ oneline : command (WS+ operand WS*)* (EOL+ | EOF);
 command :
           command SUFFIX              // LD.U
         | IDENTIFIER OPERATOR*        // U_SRDBUF, LD, LD=, CAL<<
+        | IDENTIFIER ASTRISK
         ;
 
 operand :
@@ -21,28 +22,18 @@ operand :
         ;
 
 index : IDENTIFIER | const_number;
-wordbit : IDENTIFIER WORDBIT;
+wordbit : IDENTIFIER CONST_DEC;
 indirect : ASTRISK IDENTIFIER | ASTRISK ATMARK IDENTIFIER;
-local   : ATMARK IDENTIFIER | ATMARK wordbit;
+local   : ATMARK IDENTIFIER | ATMARK wordbit | ATMARK CONST_DEC;
 const_number : CONST_DEC          // #10
              | CONST_HEX          // $10
              | INT                // 10
+//             | WORDBIT            // なんでここに必要なのだっけ？ CONST_DECしか知らない?
              ;
 
 const_string : '"' IDENTIFIER '"';
 
-OPERATOR : '='
-         | '&'
-         | '^'
-         | '+'
-         | '-'
-         | '*'                     // *@D10 が動かない。
-         | '/'
-         | '<'
-         | '>'
-         ;
-SUFFIX : DOT IDENTIFIER;
-WORDBIT : DOT INT;
+
 
 // operand
 COLON : ':';
@@ -54,13 +45,25 @@ UNDERLINE : '_';
 UNKNOWN : '???';
 EOL : '\r' | '\n';
 
-                                     // 字句なのか、構文なのか。
+OPERATOR : '='
+         | '&'
+         | '^'
+         | '+'
+         | '-'
+         | ASTRISK
+         | '/'
+         | '<'
+         | '>'
+         | '|'
+         ;
+
 CONST_DEC : '#' INT             // #10
           | K INT               // K10
           | '#' FLOAT           // #1.23
           | K FLOAT             // #1.23
           | INT
           | FLOAT
+          | FLOAT1
           ;
 
 // todo 桁指定
@@ -69,9 +72,16 @@ CONST_HEX : '$' [0-9A-Fa-f]+      // $10
           ;
 
 
-IDENTIFIER : [A-Za-z0-9_]+ ;
+
 INT : SIGN? DIGIT+;
-FLOAT : SIGN? (REAL | EXP | WORDBIT) ;      // こういう事かと思ったのだけど・・・
+FLOAT : SIGN? (REAL | EXP) ;
+FLOAT1: WORDBIT;
+WORDBIT : DOT INT;
+
+SUFFIX : DOT [A-Za-z]+;
+
+IDENTIFIER : [A-Za-z0-9_]+ ;
+
 
 fragment REAL : DIGIT* DOT DIGIT*;
 fragment EXP : REAL E SIGN? DIGIT+;
