@@ -1,6 +1,7 @@
 grammar firstHomeworkRefactor;
 
 input : oneline*;
+
 oneline : command (WS+ operand WS*)* (EOL+ | EOF);
 
 command :
