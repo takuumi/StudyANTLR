@@ -1,48 +1,62 @@
 grammar firstHomeworkRefactor;
 
 input : oneline*;
-oneline : command (WS+ operand)* (EOL* | EOF);
+oneline : command (WS+ operand WS*)* (EOL+ | EOF);
 
 command :
-          COMMAND SUFFIX?              // LD.U, U_SRDBUF, LD, LD<<
+          (IDENTIFIER | CMD_OPE)  SUFFIX?              // LD.U, U_SRDBUF, LD, LD=, CAL<<
         ;
 
 operand :
         | wordbit                   // DM10.1
         | operand COLON index       // DM10:z1, DM10#1
         | local                     // @DM10, @DM10.1
-        | indirect                  // *DM109
-        | const_number              // #10, 10, $10
-        | const_string              // "hoge"
-        | UNKNOWN                   // ???
+        | indirect                  // *DM109, *@DM200
+        | literal
         | IDENTIFIER                // hoge (variables), _MAIN, DM100, DM10_0
         ;
 
-index : IDENTIFIER | const_number;
+index : IDENTIFIER
+      | const_number
+      ;
+
+//todo const_dec?
 wordbit : IDENTIFIER CONST_DEC;
-indirect : ASTRISK IDENTIFIER | ASTRISK ATMARK IDENTIFIER;
-local   : ATMARK IDENTIFIER | ATMARK wordbit | ATMARK CONST_DEC;
+
+indirect : ASTRISK IDENTIFIER
+         | ASTRISK ATMARK IDENTIFIER
+         ;
+
+local   : ATMARK IDENTIFIER     // @EM0
+        | ATMARK wordbit        // @DM0.1
+        | ATMARK CONST_DEC      // @0
+        ;
+
+literal : const_string          // "hoge"
+        | const_number          // #10, 10, $10
+        | UNKNOWN               // ???
+        ;
+
 const_number : CONST_DEC          // #10
              | CONST_HEX          // $10
              | INT                // 10
              ;
 
 const_string : DOUBLEQUATE (DOUBLEQUATE DOUBLEQUATE | ~DOUBLEQUATE)* DOUBLEQUATE
-            ;
+             ;
 
-
-
-// operand
 COLON : ':';
 DOT   : '.';
 WS : ' ';
 ATMARK : '@';
 ASTRISK : '*';
-UNDERLINE : '_';
 UNKNOWN : '???';
-EOL : '\r' | '\n';
 DOUBLEQUATE : '"';
+SINGLEQUATE : ['];
+EOL : '\r' | '\n';
 
+// todo *だとエラー
+CMD_OPE : IDENTIFIER OPERATOR+;
 
 CONST_DEC : '#' INT             // #10
           | K INT               // K10
@@ -50,7 +64,7 @@ CONST_DEC : '#' INT             // #10
           | K FLOAT             // #1.23
           | INT
           | FLOAT
-          | FLOAT1
+          | FLOAT1              // .l
           ;
 
 // todo 桁指定
@@ -58,18 +72,16 @@ CONST_HEX : '$' [0-9A-Fa-f]+      // $10
           | H [0-9A-Fa-f]+        // H10
           ;
 
-
-
 INT : SIGN? DIGIT+;
 FLOAT : SIGN? (REAL | EXP) ;
+// todo wordbit対応
 FLOAT1: WORDBIT;
 WORDBIT : DOT INT;
 
+
 SUFFIX : DOT [A-Za-z]+;
+IDENTIFIER : [A-Za-z0-9_]+;
 
-IDENTIFIER : [A-Za-z0-9_']+ ;
-
-COMMAND : IDENTIFIER OPERATOR*;     // LD=, CAL<<
 
 fragment OPERATOR : '='
          | '&'
