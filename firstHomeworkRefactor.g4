@@ -28,10 +28,10 @@ local   : ATMARK IDENTIFIER | ATMARK wordbit | ATMARK CONST_DEC;
 const_number : CONST_DEC          // #10
              | CONST_HEX          // $10
              | INT                // 10
-//             | WORDBIT            // なんでここに必要なのだっけ？ CONST_DECしか知らない?
              ;
 
-const_string : '"' IDENTIFIER '"';
+const_string : DOUBLEQUATE (DOUBLEQUATE DOUBLEQUATE | ~DOUBLEQUATE)* DOUBLEQUATE
+            ;
 
 
 
@@ -44,6 +44,7 @@ ASTRISK : '*';
 UNDERLINE : '_';
 UNKNOWN : '???';
 EOL : '\r' | '\n';
+DOUBLEQUATE : '"';
 
 OPERATOR : '='
          | '&'
@@ -80,7 +81,7 @@ WORDBIT : DOT INT;
 
 SUFFIX : DOT [A-Za-z]+;
 
-IDENTIFIER : [A-Za-z0-9_]+ ;
+IDENTIFIER : [A-Za-z0-9_']+ ;
 
 
 fragment REAL : DIGIT* DOT DIGIT*;
