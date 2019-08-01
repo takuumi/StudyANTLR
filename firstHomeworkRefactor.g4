@@ -1,13 +1,10 @@
 grammar firstHomeworkRefactor;
 
 input : oneline*;
-//oneline : command WS* (operand WS*)* (EOL+ | EOF);
-oneline : command (WS+ operand WS*)* (EOL+ | EOF);
+oneline : command (WS+ operand)* (EOL* | EOF);
 
 command :
-          command SUFFIX              // LD.U
-        | IDENTIFIER OPERATOR*        // U_SRDBUF, LD, LD=, CAL<<
-        | IDENTIFIER ASTRISK
+          COMMAND SUFFIX?              // LD.U, U_SRDBUF, LD, LD<<
         ;
 
 operand :
@@ -46,17 +43,6 @@ UNKNOWN : '???';
 EOL : '\r' | '\n';
 DOUBLEQUATE : '"';
 
-OPERATOR : '='
-         | '&'
-         | '^'
-         | '+'
-         | '-'
-         | ASTRISK
-         | '/'
-         | '<'
-         | '>'
-         | '|'
-         ;
 
 CONST_DEC : '#' INT             // #10
           | K INT               // K10
@@ -83,6 +69,19 @@ SUFFIX : DOT [A-Za-z]+;
 
 IDENTIFIER : [A-Za-z0-9_']+ ;
 
+COMMAND : IDENTIFIER OPERATOR*;     // LD=, CAL<<
+
+fragment OPERATOR : '='
+         | '&'
+         | '^'
+         | '+'
+         | '-'
+         | '*'
+         | '/'
+         | '<'
+         | '>'
+         | '|'
+         ;
 
 fragment REAL : DIGIT* DOT DIGIT*;
 fragment EXP : REAL E SIGN? DIGIT+;
