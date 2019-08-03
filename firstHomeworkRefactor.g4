@@ -76,9 +76,7 @@ CONST_HEX : '$' [0-9A-Fa-f]+      // $10
 INT : SIGN? DIGIT+;
 FLOAT : SIGN? (REAL | EXP) ;
 // todo wordbit対応
-FLOAT1: WORDBIT;
-WORDBIT : DOT INT;
-
+FLOAT1: DOT INT;
 
 SUFFIX : DOT [A-Za-z]+;
 IDENTIFIER : [A-Za-z0-9_]+;
