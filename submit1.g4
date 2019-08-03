@@ -26,15 +26,16 @@ operator
     | GT
     | LT
     | VBAR
+    | TILDA
     ;
 
 operand
-    : IDENTIFIER                // hoge (variables), _MAIN, DM100, DM10_0
-    | literal
+    : literal
     | operand COLON index       // DM10:z1, DM10#1
+    | indirect                  // *DM109, *@DM200, #TM10, #TM0.1
     | wordbit                   // DM10.1
     | local                     // @DM10, @DM10.1
-    | indirect                  // *DM109, *@DM200
+    | IDENTIFIER                // hoge (variables), _MAIN, DM100, DM10_0
     ;
 
 index
@@ -43,11 +44,15 @@ index
     ;
 
 wordbit
-    : IDENTIFIER DOTINT;
+    : IDENTIFIER DOTINT
+    ;
+
 
 indirect
     : MUL_OR_INDIRECT IDENTIFIER
     | MUL_OR_INDIRECT local
+    | OLDINDIRECT
+    | OLDINDIRECT DOTINT
     ;
 
 local
@@ -95,10 +100,13 @@ SLASH               : '/';
 GT                  : '>';
 LT                  : '<';
 VBAR                : '|';
+TILDA               : '~';
 COLON               : ':';
 ATMARK              : '@';
 UNDEFINE            : '???';
-DOTINT              : DOT DEC_DIGIT;          // DM10.0　と .1　は意味解析
+
+DOTINT              : DOT DEC_DIGIT+;                    // DM10.0　と .1　は意味解析
+OLDINDIRECT         : SHARP T M DEC_DIGIT+;              // #TM
 
 EOL                 : '\r' | '\n';
 SEPARATOR           : (' ' | '\t')+;
