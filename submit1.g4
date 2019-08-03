@@ -47,7 +47,6 @@ wordbit
     : IDENTIFIER DOTINT
     ;
 
-
 indirect
     : MUL_OR_INDIRECT IDENTIFIER
     | MUL_OR_INDIRECT local
