@@ -4,6 +4,11 @@ input
     : oneline*;
 
 oneline
+    : mnemonic
+    | linecomment
+    ;
+
+mnemonic
     : separator* command (separator operand separator*)* (EOL+ | EOF);
 
 command
@@ -12,8 +17,11 @@ command
     ;
 
 separator
-    : SEPARATOR+
-    ;
+    : SEPARATOR+;
+
+linecomment
+    : LINECOMMENT  (EOL+ | EOF);
+
 
 operator
     : EQUAL
@@ -107,9 +115,10 @@ UNDEFINE            : '???';
 DOTINT              : DOT DEC_DIGIT+;                    // DM10.0　と .1　は意味解析
 OLDINDIRECT         : SHARP T M DEC_DIGIT+;              // #TM
 
-EOL                 : '\r' | '\n';
+EOL                 : '\r' | '\n' | '\r\n';
 SEPARATOR           : (' ' | '\t')+;
-
+//LINECOMMENT         : SEMICOLLON  (~([\n] | [\r] | [\r\n]))*;
+LINECOMMENT         : SEMICOLLON  (~[EOL])*;
 CONST_DEC_NUMBER                              // 10進即値
     : SIGN? DECIMAL_HEAD? SIGN? DEC_DIGIT+
     ;
