@@ -10,17 +10,6 @@ namespace calc
 
         public override Result VisitCalc_add([NotNull] calcParser.Calc_addContext context)
         {
-            /*
-            var (lSuc, lValue) = Visit(context.lhs);
-            var (rSuc, rValue) = Visit(context.rhs);
-            if (!(lSuc && rSuc)) return DefaultResult;
-
-            switch (context.op.Type)
-            {
-                case calcParser.PLUS: return new Result(true, lValue + rValue);
-                default: return DefaultResult;
-            }
-            */
             return new Result(true, int.Parse(context.lhs.Text) + int.Parse(context.rhs.Text));
         }
 
