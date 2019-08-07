@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{F7B93067-62A7-4C6E-9F2B-4793A084C10A}</ProjectGuid>
+    <ProjectGuid>{817BF678-CEFE-498C-B115-BF3082AEAD75}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>calc</RootNamespace>
     <AssemblyName>calc</AssemblyName>
