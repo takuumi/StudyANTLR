@@ -30,10 +30,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Antlr4.Runtime.Standard">
+      <HintPath>..\..\..\packages\Antlr4.Runtime.Standard.4.7.2\lib\net35\Antlr4.Runtime.Standard.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="calcBaseVisitor.cs" />
+    <Compile Include="calcLexer.cs" />
+    <Compile Include="calcParser.cs" />
+    <Compile Include="calcVisitor.cs" />
+    <Compile Include="Visitor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="calc.g4" />
+    <None Include="calc.interp" />
+    <None Include="calc.tokens" />
+    <None Include="calcLexer.interp" />
+    <None Include="calcLexer.tokens" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
