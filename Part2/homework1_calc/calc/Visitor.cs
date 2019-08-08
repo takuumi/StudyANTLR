@@ -26,6 +26,23 @@ namespace calc
             }
         }
 
+        public override Result VisitExpr_multipricative([NotNull] calcParser.Expr_multipricativeContext context)
+        {
+            var (lSuc, lValue) = Visit(context.lhs);
+            var (rSuc, rValue) = Visit(context.rhs);
+            if (!(lSuc && rSuc)) return DefaultResult;
+
+            switch (context.op.Type)
+            {
+                case calcParser.ASTERISK: return new Result(true, lValue * rValue);
+                case calcParser.SLASH: return new Result(true, lValue / rValue);
+                default: return DefaultResult;
+            }
+
+        }
+
+
+
 
         public override Result VisitNum([NotNull] calcParser.NumContext context)
         {

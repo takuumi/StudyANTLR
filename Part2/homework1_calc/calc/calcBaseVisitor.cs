@@ -55,6 +55,17 @@ public partial class calcBaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// <return>The visitor result.</return>
 	public virtual Result VisitExpr_additive([NotNull] calcParser.Expr_additiveContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_multipricative</c>
+	/// labeled alternative in <see cref="calcParser.expr"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExpr_multipricative([NotNull] calcParser.Expr_multipricativeContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_none</c>
 	/// labeled alternative in <see cref="calcParser.expr"/>.
 	/// <para>

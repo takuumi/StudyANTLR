@@ -1,6 +1,10 @@
 PLUS=1
 MINUS=2
-UINT=3
-WS=4
+ASTERISK=3
+SLASH=4
+UINT=5
+WS=6
 '+'=1
 '-'=2
+'*'=3
+'/'=4
