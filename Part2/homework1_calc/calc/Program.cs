@@ -9,7 +9,7 @@ namespace calc
         {
             Console.WriteLine("Hello World!");
 
-            var inputStream = CharStreams.fromstring("10+34");
+            var inputStream = CharStreams.fromstring("10-34");
             var lexer = new calcLexer(inputStream);
             var tokenStream = new CommonTokenStream(lexer);
             var parser = new calcParser(tokenStream);

@@ -34,8 +34,7 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class calcBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, IcalcVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by the <c>calc_add</c>
-	/// labeled alternative in <see cref="calcParser.input"/>.
+	/// Visit a parse tree produced by <see cref="calcParser.input"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -43,5 +42,37 @@ public partial class calcBaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitCalc_add([NotNull] calcParser.Calc_addContext context) { return VisitChildren(context); }
+	public virtual Result VisitInput([NotNull] calcParser.InputContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_additive</c>
+	/// labeled alternative in <see cref="calcParser.expr"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExpr_additive([NotNull] calcParser.Expr_additiveContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_none</c>
+	/// labeled alternative in <see cref="calcParser.expr"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExpr_none([NotNull] calcParser.Expr_noneContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="calcParser.num"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitNum([NotNull] calcParser.NumContext context) { return VisitChildren(context); }
 }

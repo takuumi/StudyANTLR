@@ -1,7 +1,19 @@
 grammar calc;
 
-input : lhs=DISITS PLUS rhs=DISITS EOF      # calc_add
-      ;
+input: expr EOF;
 
-DISITS : [0-9]+;
-PLUS   : '+';
+expr
+    : num                                       #expr_none
+    | lhs=expr op=(PLUS|MINUS) rhs=expr         #expr_additive
+    ;
+
+num
+    : UINT
+    ;
+
+PLUS: '+';
+MINUS: '-';
+
+UINT: [0-9]+;
+
+WS: [ \t]+ -> skip;

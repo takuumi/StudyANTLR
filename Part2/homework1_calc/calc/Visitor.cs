@@ -6,12 +6,36 @@ namespace calc
     class Visitor : calcBaseVisitor<Visitor.Result>
     {        
         protected override Result DefaultResult => new Result(false, 0);
-        //public override Result VisitInput([NotNull] calcParser.InputContext context) => Visit(context);
 
-        public override Result VisitCalc_add([NotNull] calcParser.Calc_addContext context)
+        public override Result VisitInput([NotNull] calcParser.InputContext context)
         {
-            return new Result(true, int.Parse(context.lhs.Text) + int.Parse(context.rhs.Text));
+            return Visit(context.expr());
         }
+
+        public override Result VisitExpr_additive([NotNull] calcParser.Expr_additiveContext context)
+        {
+            var (lSuc, lValue) = Visit(context.lhs);
+            var (rSuc, rValue) = Visit(context.rhs);
+            if (!(lSuc && rSuc)) return DefaultResult;
+
+            switch (context.op.Type)
+            {
+                case calcParser.PLUS: return new Result(true, lValue + rValue);
+                case calcParser.MINUS: return new Result(true, lValue - rValue);
+                default: return DefaultResult;
+            }
+        }
+
+
+        public override Result VisitNum([NotNull] calcParser.NumContext context)
+        {
+            switch (context.Start.Type)
+            {
+                case calcParser.UINT: return new Result(true, int.Parse(context.Start.Text));
+                default: return DefaultResult;
+            }
+        }
+
 
         public class Result
         {

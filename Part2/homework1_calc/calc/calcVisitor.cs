@@ -32,10 +32,29 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IcalcVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by the <c>calc_add</c>
-	/// labeled alternative in <see cref="calcParser.input"/>.
+	/// Visit a parse tree produced by <see cref="calcParser.input"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitCalc_add([NotNull] calcParser.Calc_addContext context);
+	Result VisitInput([NotNull] calcParser.InputContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_additive</c>
+	/// labeled alternative in <see cref="calcParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpr_additive([NotNull] calcParser.Expr_additiveContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_none</c>
+	/// labeled alternative in <see cref="calcParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpr_none([NotNull] calcParser.Expr_noneContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="calcParser.num"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNum([NotNull] calcParser.NumContext context);
 }

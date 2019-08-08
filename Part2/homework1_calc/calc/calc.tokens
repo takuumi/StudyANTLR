@@ -1,3 +1,6 @@
-DISITS=1
-PLUS=2
-'+'=2
+PLUS=1
+MINUS=2
+UINT=3
+WS=4
+'+'=1
+'-'=2
