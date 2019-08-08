@@ -34,9 +34,18 @@ namespace calc
 
             switch (context.op.Type)
             {
-                case calcParser.ASTERISK: return new Result(true, lValue * rValue);
-                case calcParser.SLASH: return new Result(true, lValue / rValue);
-                default: return DefaultResult;
+                case calcParser.ASTERISK:
+                    return new Result(true, lValue * rValue);
+                case calcParser.SLASH:
+                    if (rValue==0)
+                    {
+                        return new Result(false, 0);
+                    }
+                    else
+                    {
+                        return new Result(true, lValue / rValue);
+                    }
+                    default: return DefaultResult;
             }
 
         }

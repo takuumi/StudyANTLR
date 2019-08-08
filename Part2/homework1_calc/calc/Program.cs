@@ -1,5 +1,5 @@
 ﻿using System;
-using Antlr4.Runtime;
+
 
 namespace calc
 {
@@ -8,17 +8,8 @@ namespace calc
         public static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            Console.WriteLine(Calclator.Execute("2+3"));
 
-            var inputStream = CharStreams.fromstring("10/5");
-            var lexer = new calcLexer(inputStream);
-            var tokenStream = new CommonTokenStream(lexer);
-            var parser = new calcParser(tokenStream);
-
-            var inputTree = parser.input();
-
-            var (isSuccess, value) = new Visitor().Visit(inputTree);
-            if (isSuccess) Console.WriteLine($"success. {value}");
-            else Console.WriteLine("error.");
         }
     }
 }

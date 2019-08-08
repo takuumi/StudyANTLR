@@ -42,6 +42,7 @@
     <Compile Include="calcParser.cs" />
     <Compile Include="calcVisitor.cs" />
     <Compile Include="Visitor.cs" />
+    <Compile Include="Calclator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
