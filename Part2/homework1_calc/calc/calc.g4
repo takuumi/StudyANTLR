@@ -10,6 +10,7 @@ expr
 
 num
     : UINT
+    | REAL
     ;
 
 PLUS: '+';
@@ -19,4 +20,9 @@ SLASH: '/';
 
 UINT: [0-9]+;
 
+REAL : DEC_DIGIT* DOT DEC_DIGIT*;
+
 WS: [ \t]+ -> skip;
+
+fragment DEC_DIGIT      : [0-9];
+fragment DOT            : '.';

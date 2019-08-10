@@ -15,8 +15,8 @@ namespace calc
 
             var inputTree = parser.input();
 
-            var (isSuccess, value) = new Visitor().Visit(inputTree);
-            if (isSuccess) return $"{value}";
+            var (isSuccess, type, value) = new Visitor().Visit(inputTree);
+            if (isSuccess) return $"{type}" + ":" + $"{value}";
             else
             {
                 return ErrString.GetErrString((ErrID)value);
