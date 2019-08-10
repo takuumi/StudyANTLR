@@ -1,5 +1,6 @@
 ﻿using System;
 using Antlr4.Runtime;
+using static calc.ErrString;
 
 namespace calc
 {
@@ -16,7 +17,11 @@ namespace calc
 
             var (isSuccess, value) = new Visitor().Visit(inputTree);
             if (isSuccess) return $"{value}";
-            else return "err";
+            else
+            {
+                return ErrString.GetErrString((ErrID)value);
+
+            }
         }
     }
 }

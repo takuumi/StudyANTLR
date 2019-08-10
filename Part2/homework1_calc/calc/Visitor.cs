@@ -17,12 +17,21 @@ namespace calc
             var (lSuc, lValue) = Visit(context.lhs);
             var (rSuc, rValue) = Visit(context.rhs);
             if (!(lSuc && rSuc)) return DefaultResult;
-
-            switch (context.op.Type)
+            try
             {
-                case calcParser.PLUS: return new Result(true, lValue + rValue);
-                case calcParser.MINUS: return new Result(true, lValue - rValue);
-                default: return DefaultResult;
+                checked
+                {
+                    switch (context.op.Type)
+                    {
+                        case calcParser.PLUS: return new Result(true, lValue + rValue);
+                        case calcParser.MINUS: return new Result(true, lValue - rValue);
+                        default: return DefaultResult;
+                    }
+                }
+            }
+            catch (OverflowException)
+            {
+                return new Result(false, (int)ErrString.ErrID.OverFlow);
             }
         }
 
@@ -32,22 +41,32 @@ namespace calc
             var (rSuc, rValue) = Visit(context.rhs);
             if (!(lSuc && rSuc)) return DefaultResult;
 
-            switch (context.op.Type)
+            try
             {
-                case calcParser.ASTERISK:
-                    return new Result(true, lValue * rValue);
-                case calcParser.SLASH:
-                    if (rValue==0)
-                    {
-                        return new Result(false, 0);
-                    }
-                    else
-                    {
-                        return new Result(true, lValue / rValue);
-                    }
-                    default: return DefaultResult;
-            }
+                checked
+                {
 
+                    switch (context.op.Type)
+                    {
+                        case calcParser.ASTERISK:
+                            return new Result(true, lValue * rValue);
+                        case calcParser.SLASH:
+                            if (rValue == 0)
+                            {
+                                return new Result(false, (int)ErrString.ErrID.ZeroDiv);
+                            }
+                            else
+                            {
+                                return new Result(true, lValue / rValue);
+                            }
+                        default: return DefaultResult;
+                    }
+                }
+            }
+            catch (OverflowException)
+            {
+                return new Result(false, (int)ErrString.ErrID.OverFlow);
+            }
         }
 
 

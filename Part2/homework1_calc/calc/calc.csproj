@@ -43,6 +43,7 @@
     <Compile Include="calcVisitor.cs" />
     <Compile Include="Visitor.cs" />
     <Compile Include="Calclator.cs" />
+    <Compile Include="ErrString.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
