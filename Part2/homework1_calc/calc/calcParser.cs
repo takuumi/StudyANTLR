@@ -36,7 +36,8 @@ public partial class calcParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		PLUS=1, MINUS=2, ASTERISK=3, SLASH=4, UINT=5, REAL=6, WS=7;
+		PLUS=1, MINUS=2, ASTERISK=3, SLASH=4, OPEN_PAREN=5, CLOSE_PAREN=6, COMMA=7, 
+		UINT=8, REAL=9, WS=10, IDENTIFIER=11;
 	public const int
 		RULE_input = 0, RULE_expr = 1, RULE_num = 2;
 	public static readonly string[] ruleNames = {
@@ -44,10 +45,11 @@ public partial class calcParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'+'", "'-'", "'*'", "'/'"
+		null, "'+'", "'-'", "'*'", "'/'", "'('", "')'", "','"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "PLUS", "MINUS", "ASTERISK", "SLASH", "UINT", "REAL", "WS"
+		null, "PLUS", "MINUS", "ASTERISK", "SLASH", "OPEN_PAREN", "CLOSE_PAREN", 
+		"COMMA", "UINT", "REAL", "WS", "IDENTIFIER"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -151,6 +153,23 @@ public partial class calcParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class Expr_funccallContext : ExprContext {
+		public IToken funcname;
+		public ExprContext _expr;
+		public IList<ExprContext> _args = new List<ExprContext>();
+		public ITerminalNode OPEN_PAREN() { return GetToken(calcParser.OPEN_PAREN, 0); }
+		public ITerminalNode CLOSE_PAREN() { return GetToken(calcParser.CLOSE_PAREN, 0); }
+		public ITerminalNode IDENTIFIER() { return GetToken(calcParser.IDENTIFIER, 0); }
+		public ExprContext expr() {
+			return GetRuleContext<ExprContext>(0);
+		}
+		public Expr_funccallContext(ExprContext context) { CopyFrom(context); }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcalcVisitor<TResult> typedVisitor = visitor as IcalcVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpr_funccall(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 	public partial class Expr_multipricativeContext : ExprContext {
 		public ExprContext lhs;
 		public IToken op;
@@ -199,34 +218,55 @@ public partial class calcParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			{
-			_localctx = new Expr_noneContext(_localctx);
-			Context = _localctx;
-			_prevctx = _localctx;
+			State = 16;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case UINT:
+			case REAL:
+				{
+				_localctx = new Expr_noneContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
 
-			State = 10; num();
+				State = 10; num();
+				}
+				break;
+			case IDENTIFIER:
+				{
+				_localctx = new Expr_funccallContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 11; ((Expr_funccallContext)_localctx).funcname = Match(IDENTIFIER);
+				State = 12; Match(OPEN_PAREN);
+				State = 13; ((Expr_funccallContext)_localctx)._expr = expr(0);
+				((Expr_funccallContext)_localctx)._args.Add(((Expr_funccallContext)_localctx)._expr);
+				State = 14; Match(CLOSE_PAREN);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 20;
+			State = 26;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,1,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,2,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 18;
+					State = 24;
 					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,0,Context) ) {
+					switch ( Interpreter.AdaptivePredict(TokenStream,1,Context) ) {
 					case 1:
 						{
 						_localctx = new Expr_additiveContext(new ExprContext(_parentctx, _parentState));
 						((Expr_additiveContext)_localctx).lhs = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 12;
-						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 13;
+						State = 18;
+						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
+						State = 19;
 						((Expr_additiveContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !(_la==PLUS || _la==MINUS) ) {
@@ -236,7 +276,7 @@ public partial class calcParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 14; ((Expr_additiveContext)_localctx).rhs = expr(3);
+						State = 20; ((Expr_additiveContext)_localctx).rhs = expr(4);
 						}
 						break;
 					case 2:
@@ -244,9 +284,9 @@ public partial class calcParser : Parser {
 						_localctx = new Expr_multipricativeContext(new ExprContext(_parentctx, _parentState));
 						((Expr_multipricativeContext)_localctx).lhs = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 15;
-						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
-						State = 16;
+						State = 21;
+						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
+						State = 22;
 						((Expr_multipricativeContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !(_la==ASTERISK || _la==SLASH) ) {
@@ -256,15 +296,15 @@ public partial class calcParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 17; ((Expr_multipricativeContext)_localctx).rhs = expr(2);
+						State = 23; ((Expr_multipricativeContext)_localctx).rhs = expr(3);
 						}
 						break;
 					}
 					} 
 				}
-				State = 22;
+				State = 28;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,1,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,2,Context);
 			}
 			}
 		}
@@ -302,7 +342,7 @@ public partial class calcParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 23;
+			State = 29;
 			_la = TokenStream.LA(1);
 			if ( !(_la==UINT || _la==REAL) ) {
 			ErrorHandler.RecoverInline(this);
@@ -332,36 +372,42 @@ public partial class calcParser : Parser {
 	}
 	private bool expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Precpred(Context, 2);
-		case 1: return Precpred(Context, 1);
+		case 0: return Precpred(Context, 3);
+		case 1: return Precpred(Context, 2);
 		}
 		return true;
 	}
 
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\t', '\x1C', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
+		'\x5964', '\x3', '\r', '\"', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
 		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x3', '\x2', '\x3', '\x2', '\x3', 
 		'\x2', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', 
-		'\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\a', '\x3', 
-		'\x15', '\n', '\x3', '\f', '\x3', '\xE', '\x3', '\x18', '\v', '\x3', '\x3', 
-		'\x4', '\x3', '\x4', '\x3', '\x4', '\x2', '\x3', '\x4', '\x5', '\x2', 
-		'\x4', '\x6', '\x2', '\x5', '\x3', '\x2', '\x3', '\x4', '\x3', '\x2', 
-		'\x5', '\x6', '\x3', '\x2', '\a', '\b', '\x2', '\x1A', '\x2', '\b', '\x3', 
-		'\x2', '\x2', '\x2', '\x4', '\v', '\x3', '\x2', '\x2', '\x2', '\x6', '\x19', 
-		'\x3', '\x2', '\x2', '\x2', '\b', '\t', '\x5', '\x4', '\x3', '\x2', '\t', 
-		'\n', '\a', '\x2', '\x2', '\x3', '\n', '\x3', '\x3', '\x2', '\x2', '\x2', 
-		'\v', '\f', '\b', '\x3', '\x1', '\x2', '\f', '\r', '\x5', '\x6', '\x4', 
-		'\x2', '\r', '\x16', '\x3', '\x2', '\x2', '\x2', '\xE', '\xF', '\f', '\x4', 
-		'\x2', '\x2', '\xF', '\x10', '\t', '\x2', '\x2', '\x2', '\x10', '\x15', 
-		'\x5', '\x4', '\x3', '\x5', '\x11', '\x12', '\f', '\x3', '\x2', '\x2', 
-		'\x12', '\x13', '\t', '\x3', '\x2', '\x2', '\x13', '\x15', '\x5', '\x4', 
-		'\x3', '\x4', '\x14', '\xE', '\x3', '\x2', '\x2', '\x2', '\x14', '\x11', 
-		'\x3', '\x2', '\x2', '\x2', '\x15', '\x18', '\x3', '\x2', '\x2', '\x2', 
-		'\x16', '\x14', '\x3', '\x2', '\x2', '\x2', '\x16', '\x17', '\x3', '\x2', 
-		'\x2', '\x2', '\x17', '\x5', '\x3', '\x2', '\x2', '\x2', '\x18', '\x16', 
-		'\x3', '\x2', '\x2', '\x2', '\x19', '\x1A', '\t', '\x4', '\x2', '\x2', 
-		'\x1A', '\a', '\x3', '\x2', '\x2', '\x2', '\x4', '\x14', '\x16',
+		'\x3', '\x3', '\x3', '\x3', '\x3', '\x5', '\x3', '\x13', '\n', '\x3', 
+		'\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', 
+		'\x3', '\x3', '\a', '\x3', '\x1B', '\n', '\x3', '\f', '\x3', '\xE', '\x3', 
+		'\x1E', '\v', '\x3', '\x3', '\x4', '\x3', '\x4', '\x3', '\x4', '\x2', 
+		'\x3', '\x4', '\x5', '\x2', '\x4', '\x6', '\x2', '\x5', '\x3', '\x2', 
+		'\x3', '\x4', '\x3', '\x2', '\x5', '\x6', '\x3', '\x2', '\n', '\v', '\x2', 
+		'!', '\x2', '\b', '\x3', '\x2', '\x2', '\x2', '\x4', '\x12', '\x3', '\x2', 
+		'\x2', '\x2', '\x6', '\x1F', '\x3', '\x2', '\x2', '\x2', '\b', '\t', '\x5', 
+		'\x4', '\x3', '\x2', '\t', '\n', '\a', '\x2', '\x2', '\x3', '\n', '\x3', 
+		'\x3', '\x2', '\x2', '\x2', '\v', '\f', '\b', '\x3', '\x1', '\x2', '\f', 
+		'\x13', '\x5', '\x6', '\x4', '\x2', '\r', '\xE', '\a', '\r', '\x2', '\x2', 
+		'\xE', '\xF', '\a', '\a', '\x2', '\x2', '\xF', '\x10', '\x5', '\x4', '\x3', 
+		'\x2', '\x10', '\x11', '\a', '\b', '\x2', '\x2', '\x11', '\x13', '\x3', 
+		'\x2', '\x2', '\x2', '\x12', '\v', '\x3', '\x2', '\x2', '\x2', '\x12', 
+		'\r', '\x3', '\x2', '\x2', '\x2', '\x13', '\x1C', '\x3', '\x2', '\x2', 
+		'\x2', '\x14', '\x15', '\f', '\x5', '\x2', '\x2', '\x15', '\x16', '\t', 
+		'\x2', '\x2', '\x2', '\x16', '\x1B', '\x5', '\x4', '\x3', '\x6', '\x17', 
+		'\x18', '\f', '\x4', '\x2', '\x2', '\x18', '\x19', '\t', '\x3', '\x2', 
+		'\x2', '\x19', '\x1B', '\x5', '\x4', '\x3', '\x5', '\x1A', '\x14', '\x3', 
+		'\x2', '\x2', '\x2', '\x1A', '\x17', '\x3', '\x2', '\x2', '\x2', '\x1B', 
+		'\x1E', '\x3', '\x2', '\x2', '\x2', '\x1C', '\x1A', '\x3', '\x2', '\x2', 
+		'\x2', '\x1C', '\x1D', '\x3', '\x2', '\x2', '\x2', '\x1D', '\x5', '\x3', 
+		'\x2', '\x2', '\x2', '\x1E', '\x1C', '\x3', '\x2', '\x2', '\x2', '\x1F', 
+		' ', '\t', '\x4', '\x2', '\x2', ' ', '\a', '\x3', '\x2', '\x2', '\x2', 
+		'\x5', '\x12', '\x1A', '\x1C',
 	};
 
 	public static readonly ATN _ATN =

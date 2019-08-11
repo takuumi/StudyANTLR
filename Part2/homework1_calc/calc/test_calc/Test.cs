@@ -7,6 +7,8 @@ namespace test_calc
     {
         [TestCase("11+1"            , "IntNumber:12")]            
         [TestCase("1+1.0"           , "RealNumber:2")]
+        [TestCase("1 + .7"          , "RealNumber:1.7")]
+        [TestCase("1 + 3."          , "RealNumber:4")]
         [TestCase("1.123+1.0"       , "RealNumber:2.123")]
         [TestCase("2147483647+1"    , "Err.OverFlow")]
 
@@ -24,6 +26,8 @@ namespace test_calc
         [TestCase("11/2"            , "RealNumber:5.5")]
         [TestCase("10/0"            , "Err.ZeroDiv")]
 
+        [TestCase("1+sin(90)"       , "RealNumber:2")]
+        [TestCase("1+sin(180)"       , "RealNumber:1")]
         public void TestCase(string input, string expected)
         {
             Assert.AreEqual(expected, calc.Calclator.Execute(input));

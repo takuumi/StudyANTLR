@@ -103,6 +103,25 @@ namespace calc
             }
         }
 
+        public override Result VisitExpr_funccall([NotNull] calcParser.Expr_funccallContext context)
+        {
+            var (argSuc, argType, argValue) = Visit(context._args[0]);
+            if (!argSuc) return DefaultResult;
+            
+            if (context.funcname.Text.ToUpper() == "SIN")
+            {
+                return new Result(true, ResultType.RealNumber, (float)Math.Sin(GetValFloat(argType, argValue) * (Math.PI / 180)));
+            }
+            else
+            {
+                Debug.Assert(false);
+                return DefaultResult;
+            }
+
+
+        }
+
+
         public override Result VisitNum([NotNull] calcParser.NumContext context)
         {
             switch (context.Start.Type)
