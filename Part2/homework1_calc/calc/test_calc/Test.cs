@@ -15,7 +15,7 @@ namespace test_calc
         [TestCase("1-21"            , "IntNumber:-20")]
         [TestCase("1.0 - 1"         , "RealNumber:0")]
         [TestCase("1.0 - 1.123"     , "RealNumber:-0.123")]
-        [TestCase("-2147483646-1"   , "Err.OverFlow")]
+        [TestCase("-2147483647-2"   , "Err.OverFlow")]
 
         [TestCase("11*1"            , "IntNumber:11")]
         [TestCase("11*0.1"          , "RealNumber:1.1")]

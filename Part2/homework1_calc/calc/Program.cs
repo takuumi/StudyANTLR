@@ -10,7 +10,7 @@ namespace calc
 
 
             Console.WriteLine("Hello World!");
-            Console.WriteLine(Calclator.Execute("1+sin(90)"));
+            Console.WriteLine(Calclator.Execute("-2147483648-1"));
 
         }
     }

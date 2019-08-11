@@ -117,8 +117,40 @@ namespace calc
                 Debug.Assert(false);
                 return DefaultResult;
             }
+        }
 
+        public override Result VisitExpr_unary([NotNull] calcParser.Expr_unaryContext context)
+        {
+            var (Suc, type, value) = base.VisitExpr_unary(context);
+            if (!Suc) return DefaultResult; 
 
+            try
+            {
+                checked
+                {
+                    switch (context.op.Type)
+                    {
+                        case calcParser.PLUS:   return new Result(true, type, value);
+                        case calcParser.MINUS:
+                            if (type==ResultType.IntNumber)
+                            {
+
+                                return new Result(true, type, GetValInt(type, value) * -1);
+                            }
+                            else
+                            {
+                                return new Result(true, type, GetValFloat(type, value) * -1);
+                            }
+                        default: return DefaultResult;
+                    }
+                }
+            }
+            catch (OverflowException)
+            {
+                return new Result(false, ResultType.None, (int)ErrString.ErrID.OverFlow);
+            }
+
+            //                            return base.VisitExpr_unary(context);
         }
 
 

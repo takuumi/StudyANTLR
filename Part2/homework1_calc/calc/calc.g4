@@ -4,6 +4,7 @@ input: expr EOF;
 
 expr
     : num                                       #expr_none
+    | op=(PLUS|MINUS) expr                      #expr_unary
     | lhs=expr op=(PLUS|MINUS) rhs=expr         #expr_additive
     | lhs=expr op=(ASTERISK | SLASH) rhs=expr   #expr_multipricative
     | funcname=IDENTIFIER OPEN_PAREN args+=expr CLOSE_PAREN #expr_funccall   //+=を使うと、同じ種類の構文要素リスト化できる

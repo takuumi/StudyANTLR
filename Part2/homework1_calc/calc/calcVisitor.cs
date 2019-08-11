@@ -59,6 +59,13 @@ public interface IcalcVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpr_multipricative([NotNull] calcParser.Expr_multipricativeContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_unary</c>
+	/// labeled alternative in <see cref="calcParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpr_unary([NotNull] calcParser.Expr_unaryContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_none</c>
 	/// labeled alternative in <see cref="calcParser.expr"/>.
 	/// </summary>
