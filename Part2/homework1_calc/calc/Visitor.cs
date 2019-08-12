@@ -164,6 +164,18 @@ namespace calc
             }
         }
 
+        public override Result VisitExpr_define([NotNull] calcParser.Expr_defineContext context)
+        {
+            if (context.Start.Text.ToUpper() == ("PI"))
+            {
+                return new Result(true, ResultType.RealNumber, (float)Math.PI);
+            } else
+            {
+                Debug.Assert(false);
+                return DefaultResult;
+            }
+        }
+
 
         public class Result
         {

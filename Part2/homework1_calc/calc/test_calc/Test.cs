@@ -27,7 +27,9 @@ namespace test_calc
         [TestCase("10/0"            , "Err.ZeroDiv")]
 
         [TestCase("1+sin(90)"       , "RealNumber:2")]
-        [TestCase("1+sin(180)"       , "RealNumber:1")]
+        [TestCase("1+sin(180)"      , "RealNumber:1")]
+
+        [TestCase("1+PI"           , "RealNumber:4.141593")]
         public void TestCase(string input, string expected)
         {
             Assert.AreEqual(expected, calc.Calclator.Execute(input));

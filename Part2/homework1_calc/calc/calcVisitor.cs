@@ -38,6 +38,13 @@ public interface IcalcVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInput([NotNull] calcParser.InputContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_define</c>
+	/// labeled alternative in <see cref="calcParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpr_define([NotNull] calcParser.Expr_defineContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_additive</c>
 	/// labeled alternative in <see cref="calcParser.expr"/>.
 	/// </summary>
@@ -78,4 +85,10 @@ public interface IcalcVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitNum([NotNull] calcParser.NumContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="calcParser.define"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDefine([NotNull] calcParser.DefineContext context);
 }

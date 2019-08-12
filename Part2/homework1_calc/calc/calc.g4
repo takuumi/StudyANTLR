@@ -4,6 +4,7 @@ input: expr EOF;
 
 expr
     : num                                       #expr_none
+    | define                                    #expr_define
     | op=(PLUS|MINUS) expr                      #expr_unary
     | lhs=expr op=(PLUS|MINUS) rhs=expr         #expr_additive
     | lhs=expr op=(ASTERISK | SLASH) rhs=expr   #expr_multipricative
@@ -13,6 +14,10 @@ expr
 num
     : UINT
     | REAL
+    ;
+
+define
+    : IDENTIFIER
     ;
 
 PLUS: '+';
