@@ -10,7 +10,7 @@ namespace calc
 
 
             Console.WriteLine("Hello World!");
-            Console.WriteLine(Calclator.Execute("-2147483648-1"));
+            Console.WriteLine(Calclator.Execute("\"abc\" + \"def \""));
 
         }
     }

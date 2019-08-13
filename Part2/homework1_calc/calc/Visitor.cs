@@ -28,20 +28,53 @@ namespace calc
                             if ((ltype == ResultType.IntNumber) && (rtype == ResultType.IntNumber))
                             {
                                 return new Result(true, ResultType.IntNumber, GetValInt(ltype, lValue) + GetValInt(rtype, rValue));
-                            } else
+                            }
+                            else if ((ltype == ResultType.StringType) && (rtype == ResultType.StringType))
+                            {
+                                return new Result(true, ResultType.StringType, (string)lValue + (string)rValue);
+                            }
+                            else if ((ltype == ResultType.RealNumber) && (rtype == ResultType.RealNumber))
                             {
                                 return new Result(true, ResultType.RealNumber, GetValFloat(ltype, lValue) + GetValFloat(rtype, rValue));
+                            }
+                            else if (((ltype == ResultType.IntNumber) && (rtype == ResultType.RealNumber)) ||
+                                     ((ltype == ResultType.RealNumber) && (rtype == ResultType.IntNumber)))
+                            {
+                                return new Result(true, ResultType.RealNumber, GetValFloat(ltype, lValue) + GetValFloat(rtype, rValue));
+                            }
+                            else
+                            {
+                                Debug.Assert(false);
+                                return DefaultResult;
                             }
                         case calcParser.MINUS:
                             if ((ltype == ResultType.IntNumber) && (rtype == ResultType.IntNumber))
                             {
                                 return new Result(true, ResultType.IntNumber, GetValInt(ltype, lValue) - GetValInt(rtype, rValue));
                             }
-                            else
+                            else　if ((ltype == ResultType.StringType) && (rtype == ResultType.StringType))
+                            {
+                                //todo 行けたらいくスタイル？
+                                Debug.Assert(false);
+                                return DefaultResult;
+                            }
+                            else if ((ltype == ResultType.RealNumber) && (rtype == ResultType.RealNumber))
                             {
                                 return new Result(true, ResultType.RealNumber, GetValFloat(ltype, lValue) - GetValFloat(rtype, rValue));
                             }
-                        default: return DefaultResult;
+                            else if (((ltype == ResultType.IntNumber) && (rtype == ResultType.RealNumber)) ||
+                                     ((ltype == ResultType.RealNumber) && (rtype == ResultType.IntNumber)))
+                            {
+                                return new Result(true, ResultType.RealNumber, GetValFloat(ltype, lValue) - GetValFloat(rtype, rValue));
+                            }
+                            else
+                            {
+                                Debug.Assert(false);
+                                return DefaultResult;
+                            }
+                        default:
+                            Debug.Assert(false);
+                            return DefaultResult;
                     }
                 }
             }
@@ -67,9 +100,48 @@ namespace calc
                             if ((ltype == ResultType.IntNumber) && (rtype == ResultType.IntNumber))
                             {
                                 return new Result(true, ResultType.IntNumber, GetValInt(ltype, lValue) * GetValInt(rtype, rValue));
-                            } else
+                            }
+                            else if ((ltype == ResultType.StringType) && (rtype == ResultType.StringType))
                             {
-                                return new Result(true, ResultType.RealNumber, GetValFloat(ltype, lValue) * GetValFloat(rtype , rValue));
+                                Debug.Assert(false);
+                                return DefaultResult;
+                            }
+                            else if ((ltype == ResultType.RealNumber) && (rtype == ResultType.RealNumber))
+                            {
+                                return new Result(true, ResultType.RealNumber, GetValFloat(ltype, lValue) * GetValFloat(rtype, rValue));
+                            }
+                            else if (((ltype == ResultType.IntNumber) && (rtype == ResultType.RealNumber)) ||
+                                     ((ltype == ResultType.RealNumber) && (rtype == ResultType.IntNumber)))
+                            {
+                                return new Result(true, ResultType.RealNumber, GetValFloat(ltype, lValue) * GetValFloat(rtype, rValue));
+                            }
+                            else if (((ltype == ResultType.IntNumber) && (rtype == ResultType.StringType)) ||
+                                     ((ltype == ResultType.StringType) && (rtype == ResultType.IntNumber)))
+                            {
+                                var iNum = 0;
+                                string str;
+                                string strReturn = "";
+                                if (ltype == ResultType.IntNumber)
+                                {
+                                    iNum = GetValInt(ltype, lValue);
+                                    str = (string)rValue;
+                                }
+                                else
+                                {
+                                    iNum = GetValInt(rtype, rValue);
+                                    str = (string)lValue;
+                                }
+                                for (int i = 0; i < iNum; i++)
+                                {
+                                    strReturn += str;
+                                }
+
+                                return new Result(true, ResultType.StringType, strReturn);
+                            }
+                            else
+                            {
+                                Debug.Assert(false);
+                                return DefaultResult;
                             }
                         case calcParser.SLASH:
 
@@ -111,6 +183,10 @@ namespace calc
             if (context.funcname.Text.ToUpper() == "SIN")
             {
                 return new Result(true, ResultType.RealNumber, (float)Math.Sin(GetValFloat(argType, argValue) * (Math.PI / 180)));
+            }
+            if (context.funcname.Text.ToUpper() == "LEN"){
+                string str = (string)argValue;
+                return new Result(true, ResultType.IntNumber, str.Length);
             }
             else
             {
@@ -176,6 +252,15 @@ namespace calc
             }
         }
 
+        public override Result VisitExpr_string([NotNull] calcParser.Expr_stringContext context)
+        {
+            var str = context.Start.Text;
+            str = str.Remove(0, 1);
+            str = str.Remove(str.Length-1, 1);
+
+            return new Result(true, ResultType.StringType, str);
+        }
+
 
         public class Result
         {
@@ -202,7 +287,8 @@ namespace calc
         {
             None,
             IntNumber,
-            RealNumber
+            RealNumber,
+            StringType
         }
 
         public static int GetValInt(ResultType type, object val)

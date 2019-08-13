@@ -30,6 +30,12 @@ namespace test_calc
         [TestCase("1+sin(180)"      , "RealNumber:1")]
 
         [TestCase("1+PI"           , "RealNumber:4.141593")]
+
+        [TestCase("\"abc\" + \"de f\"", "StringType:abcde f")]
+        [TestCase("\"abc\" * 3", "StringType:abcabcabc")]
+        [TestCase("4*\"abc\"", "StringType:abcabcabcabc")]
+        [TestCase("5 + LEN(\"abc\")", "IntNumber:8")]
+
         public void TestCase(string input, string expected)
         {
             Assert.AreEqual(expected, calc.Calclator.Execute(input));
