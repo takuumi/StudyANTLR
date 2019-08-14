@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace calc
 {
@@ -8,14 +8,19 @@ namespace calc
         public enum ErrID
         {
             OverFlow = 0,
-            ZeroDiv
+            ZeroDiv,
+            UnSupportCalcRule,
+            CantMinusString
         }
 
         static Dictionary<ErrID, string> _dict = new Dictionary<ErrID, string>
         {
             {ErrID.OverFlow, "Err.OverFlow"},
-            {ErrID.ZeroDiv, "Err.ZeroDiv"}
+            {ErrID.ZeroDiv, "Err.ZeroDiv"},
+            {ErrID.UnSupportCalcRule, "Err.UnSupportCalcRule" },
+            {ErrID.CantMinusString, "Err.CantMinusString" }
         };
+
 
         static public string GetErrString(ErrID id)
         {
@@ -26,6 +31,7 @@ namespace calc
             }
             else
             {
+                Debug.Assert(false);
                 return null;
             }
         }
