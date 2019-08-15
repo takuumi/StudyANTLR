@@ -30,13 +30,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Antlr4.Runtime.Standard">
+      <HintPath>..\..\..\packages\Antlr4.Runtime.Standard.4.7.2\lib\net35\Antlr4.Runtime.Standard.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="plcsimBaseVisitor.cs" />
+    <Compile Include="plcsimLexer.cs" />
+    <Compile Include="plcsimParser.cs" />
+    <Compile Include="plcsimVisitor.cs" />
+    <Compile Include="PLCSimulator.cs" />
+    <Compile Include="Visitor.cs" />
+    <Compile Include="Plc.cs" />
+    <Compile Include="InstTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="submit1.g4" />
+    <None Include="plcsim.g4" />
+    <None Include="plcsim.interp" />
+    <None Include="plcsim.tokens" />
+    <None Include="plcsimLexer.interp" />
+    <None Include="plcsimLexer.tokens" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
