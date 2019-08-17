@@ -14,6 +14,7 @@ namespace plcsim
         public class Instruction
         {
             public string Name { get; set; }
+            public string Suffix { get; set; }
             public InstAttribute Attribute { get; set; }
         }
 

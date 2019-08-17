@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Antlr4.Runtime.Misc;
 using static plcsim.InstTable;
 
@@ -20,13 +21,9 @@ namespace plcsim
         {
             foreach (var e in context.oneline()) {
                 var ret = Visit(e);
-                if(ret.IsSuccess == false)
-                {
-                    return new Result(false, 0);
-                }
+                if (!ret.IsSuccess) return ret;
             }
-
-            return new Result(true, 1);
+            return new Result(true, 0);
         }
 
         public override Result VisitPlcsim_memonic([NotNull] plcsimParser.Plcsim_memonicContext context)
@@ -37,50 +34,81 @@ namespace plcsim
         public override Result VisitPlcsim_main([NotNull] plcsimParser.Plcsim_mainContext context)
         {
             //命令語
-            var ret = Visit(context.command());
-            var inst = ret.Info as Instruction;
+            var retInst = Visit(context.command());
+            var inst = retInst.Info as Instruction;
 
             //オペランド
-            var operands = new List<string>();
-           
+            var operands = new List<IOperand>();
             foreach (var item in context.operand())
             {
                 var retOpe = Visit(item);
                 if (!retOpe.IsSuccess) return retOpe;
-                operands.Add(retOpe.Info as string);
+                operands.Add(retOpe.Info as IOperand);
             }
 
             // 命令語実行
-            ExecuteInst(inst, operands);
-            //input系なら、plcに実行条件をセット。
-            //LDの場合、どういう動作をして、実行条件がONか、どうか。を調べる
+            var errid = ExecuteInst(inst, operands);
+            if (errid != ErrString.ErrID.None)
+            {
+                return new Result(false, errid);
+            }
 
-            //output系なら、plcの実行条件がONの場合、命令語を実行plcの値を変更。
-
-
-            return new Result(true, 1);
-
+            return new Result(true, 0);
         }
 
-        private void ExecuteInst(Instruction inst, List<string> operands)
+        private ErrString.ErrID ExecuteInst(Instruction inst, List<IOperand> operands)
         {
             switch (inst.Name)
             {
                 case "LD":
                     {
-                        if(_plc.BitDevices[operands[0]])
+                        var ope = operands.ElementAt(0) as Device;
+
+                        bool bResult;
+                        if (_plc.BitDevices.TryGetValue(ope.ToString(), out bResult))
                         {
-                            _plc.ExecuteCondition = true;
+                            // TODO 複数条件あったら、全条件分を貯めておいて処理か。
+                            _plc.ExecuteCondition = bResult;
+                        }
+                        else
+                        {
+                            return ErrString.ErrID.NoPLCDevice;
                         }
                         break;
                     }
                 case "MOV":
                     {
-                        if(_plc.ExecuteCondition)
+                        var ope0 = operands.ElementAt(0) as Device;
+                        var ope1 = operands.ElementAt(1) as Device;
+
+                        if (_plc.ExecuteCondition)
                         {
+                            if (inst.Suffix == ".U" || inst.Suffix == "")
+                            {
+
+                                if (!_plc.WordDevices.ContainsKey(ope0.ToString()))
+                                {
+                                    return ErrString.ErrID.NoPLCDevice;
+                                }
+
+                                if (!_plc.WordDevices.ContainsKey(ope1.ToString()))
+                                {
+                                    return ErrString.ErrID.NoPLCDevice;
+                                }
+                                // MOVの動作
+                                _plc.WordDevices[ope1.ToString()] = _plc.WordDevices[ope0.ToString()];
+                            }
+                            else if (inst.Suffix == ".D")
+                            {
+                                // TODO
+                                //deviceクラスに文字列作ってもらって、plcに問い合わせ。それをMOV
+                                var strOpe0 = ope0.ToString();
+                                var strOpe1 = ope1.ToString();
+
+                                
 
 
-                            _plc.WordDevices[operands[1]] = _plc.WordDevices[operands[0]];
+                            }
                         }
                         break;
                     }
@@ -88,22 +116,42 @@ namespace plcsim
                     Debug.Assert(false);
                     break;
             }
+            return ErrString.ErrID.None;
         }
 
         public override Result VisitCommand([NotNull] plcsimParser.CommandContext context)
         {
-            // TODO
-            return new Result(true, new Instruction { Name = context.Start.Text, Attribute = InstTable.Table[context.Start.Text] } );
+            // 命令語
+            var inst = context.Start.Text;
+            if (!InstTable.Table.ContainsKey(inst))
+            {
+                return new Result(false, ErrString.ErrID.UnSupportInst);
+            }
+
+            // サッフィックス
+            string strSuf = "";
+            if(context.suffix !=null)
+            {
+                strSuf = context.suffix.Text;
+            }
+
+            return new Result(true, new Instruction { Name = inst, Suffix = strSuf ,Attribute = InstTable.Table[inst] } );
         }
 
         public override Result VisitOperand([NotNull] plcsimParser.OperandContext context)
         {
-            // TODO
-            return new Result(true, context.Start.Text);
+            // TODO 間接とか、インデックスとか。
+            var ident = context.IDENTIFIER();
+            var deviceStr = ident.GetText().ToUpper();
+
+            Device device;
+            if (!Device.TryParse(deviceStr, out device))
+            {
+                return new Result(false, ErrString.ErrID.UnSupportDevice);
+            }
+            return new Result(true, device);
         }
-
-
-
+               
 
         // 結果クラス
         public class Result

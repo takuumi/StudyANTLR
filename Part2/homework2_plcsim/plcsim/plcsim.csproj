@@ -45,6 +45,9 @@
     <Compile Include="Visitor.cs" />
     <Compile Include="Plc.cs" />
     <Compile Include="InstTable.cs" />
+    <Compile Include="ErrString.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="IOperand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="submit1.g4" />
