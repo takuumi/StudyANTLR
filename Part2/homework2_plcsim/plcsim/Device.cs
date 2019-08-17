@@ -15,9 +15,11 @@ namespace plcsim
             Address = address;
         }
 
-        public void Increment(int value)
+        public Boolean IsDevice() { return true; }
+
+        public Device GetIncrementDevice(int Value)
         {
-            Address = (uint)(Address + value);
+            return new Device(Code, (uint)(Address + Value));
         }
 
         public static bool TryParse(string input, out Device device)

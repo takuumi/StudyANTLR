@@ -78,36 +78,59 @@ namespace plcsim
                     }
                 case "MOV":
                     {
-                        var ope0 = operands.ElementAt(0) as Device;
+
+
+                        if (!_plc.ExecuteCondition)
+                        {
+                            // 実行条件OFFなので何もせず
+                            break;
+                        }
+
+                        if (!operands.ElementAt(1).IsDevice())
+                        {
+                            // 第２引数はデバイスじゃないとNG
+                            return ErrString.ErrID.UnSupportArgType;
+                        }
                         var ope1 = operands.ElementAt(1) as Device;
 
-                        if (_plc.ExecuteCondition)
+                        if (operands.ElementAt(0).IsDevice())
                         {
+                            var ope0 = operands.ElementAt(0) as Device;
+
+                            // オペランドの存在確認
+                            if (!_plc.WordDevices.ContainsKey(ope0.ToString()))
+                            {
+                                return ErrString.ErrID.NoPLCDevice;
+                            }
+
+                            if (!_plc.WordDevices.ContainsKey(ope1.ToString()))
+                            {
+                                return ErrString.ErrID.NoPLCDevice;
+                            }
+
+                            // MOV動作
                             if (inst.Suffix == ".U" || inst.Suffix == "")
                             {
-
-                                if (!_plc.WordDevices.ContainsKey(ope0.ToString()))
-                                {
-                                    return ErrString.ErrID.NoPLCDevice;
-                                }
-
-                                if (!_plc.WordDevices.ContainsKey(ope1.ToString()))
-                                {
-                                    return ErrString.ErrID.NoPLCDevice;
-                                }
-                                // MOVの動作
                                 _plc.WordDevices[ope1.ToString()] = _plc.WordDevices[ope0.ToString()];
                             }
                             else if (inst.Suffix == ".D")
                             {
-                                // TODO
-                                //deviceクラスに文字列作ってもらって、plcに問い合わせ。それをMOV
-                                var strOpe0 = ope0.ToString();
-                                var strOpe1 = ope1.ToString();
+                                // +1のデバイスのインクリメント
+                                var ope0Inc = ope0.GetIncrementDevice(1);
+                                var ope1Inc = ope1.GetIncrementDevice(1);
 
-                                
+                                if (!_plc.WordDevices.ContainsKey(ope0Inc.ToString()))
+                                {
+                                    return ErrString.ErrID.NoPLCDevice;
+                                }
 
+                                if (!_plc.WordDevices.ContainsKey(ope1Inc.ToString()))
+                                {
+                                    return ErrString.ErrID.NoPLCDevice;
+                                }
 
+                                _plc.WordDevices[ope1.ToString()] = _plc.WordDevices[ope0.ToString()];
+                                _plc.WordDevices[ope1Inc.ToString()] = _plc.WordDevices[ope0Inc.ToString()];
                             }
                         }
                         break;

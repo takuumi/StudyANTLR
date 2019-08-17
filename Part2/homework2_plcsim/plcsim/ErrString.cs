@@ -11,7 +11,8 @@ namespace plcsim
             None = 0,
             NoPLCDevice,
             UnSupportInst,
-            UnSupportDevice
+            UnSupportDevice,
+            UnSupportArgType
         }
 
         static Dictionary<ErrID, string> _dict = new Dictionary<ErrID, string>
@@ -19,7 +20,8 @@ namespace plcsim
             {ErrID.None, "No Err"},
             {ErrID.NoPLCDevice, "No PLC Device" },
             {ErrID.UnSupportInst, "UnSupportInst" },
-            {ErrID.UnSupportDevice, "UnSupportDevice" }
+            {ErrID.UnSupportDevice, "UnSupportDevice" },
+            {ErrID.UnSupportArgType, "UnsupportArgType" }
         };
 
 
