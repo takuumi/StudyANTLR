@@ -58,7 +58,7 @@ rule names:
 input
 oneline
 mnemonic
-command
+instruction
 separator
 linecomment
 operator

@@ -1,7 +1,7 @@
 grammar plcsim;
 
 input
-    : onelines+=oneline*;
+    : oneline*;
 
 oneline
     : mnemonic                                  #plcsim_memonic
@@ -9,11 +9,11 @@ oneline
     ;
 
 mnemonic
-    : separator* command (separator ope+=operand separator*)* (EOL+ | EOF)     #plcsim_main
+    : separator* instruction (separator ope+=operand separator*)* (EOL+ | EOF)     #plcsim_main
     ;
 
 
-command
+instruction
     : inst=IDENTIFIER suffix=SUFFIX?                                              // LD=, CAL++.L
     | inst=IDENTIFIER opr=operator+ suf=SUFFIX?                           // LD.U, U_SRDBUF, LD, LD=, CAL<<
     ;

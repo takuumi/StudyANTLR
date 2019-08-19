@@ -41,13 +41,13 @@ public partial class plcsimParser : Parser {
 		OLDINDIRECT=16, EOL=17, SEPARATOR=18, LINECOMMENT=19, CONST_DEC_NUMBER=20, 
 		CONST_HEX_NUMBER=21, CONST_FLOAT=22, CONST_STRING=23, SUFFIX=24, IDENTIFIER=25;
 	public const int
-		RULE_input = 0, RULE_oneline = 1, RULE_mnemonic = 2, RULE_command = 3, 
+		RULE_input = 0, RULE_oneline = 1, RULE_mnemonic = 2, RULE_instruction = 3, 
 		RULE_separator = 4, RULE_linecomment = 5, RULE_operator = 6, RULE_operand = 7, 
 		RULE_index = 8, RULE_wordbit = 9, RULE_indirect = 10, RULE_local = 11, 
 		RULE_literal = 12, RULE_const_number = 13, RULE_const_string = 14, RULE_const_dec_number = 15, 
 		RULE_const_hex_number = 16, RULE_const_float = 17;
 	public static readonly string[] ruleNames = {
-		"input", "oneline", "mnemonic", "command", "separator", "linecomment", 
+		"input", "oneline", "mnemonic", "instruction", "separator", "linecomment", 
 		"operator", "operand", "index", "wordbit", "indirect", "local", "literal", 
 		"const_number", "const_string", "const_dec_number", "const_hex_number", 
 		"const_float"
@@ -96,8 +96,6 @@ public partial class plcsimParser : Parser {
 	}
 
 	public partial class InputContext : ParserRuleContext {
-		public OnelineContext _oneline;
-		public IList<OnelineContext> _onelines = new List<OnelineContext>();
 		public OnelineContext[] oneline() {
 			return GetRuleContexts<OnelineContext>();
 		}
@@ -130,8 +128,7 @@ public partial class plcsimParser : Parser {
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SEPARATOR) | (1L << LINECOMMENT) | (1L << IDENTIFIER))) != 0)) {
 				{
 				{
-				State = 36; _localctx._oneline = oneline();
-				_localctx._onelines.Add(_localctx._oneline);
+				State = 36; oneline();
 				}
 				}
 				State = 41;
@@ -239,8 +236,8 @@ public partial class plcsimParser : Parser {
 	public partial class Plcsim_mainContext : MnemonicContext {
 		public OperandContext _operand;
 		public IList<OperandContext> _ope = new List<OperandContext>();
-		public CommandContext command() {
-			return GetRuleContext<CommandContext>(0);
+		public InstructionContext instruction() {
+			return GetRuleContext<InstructionContext>(0);
 		}
 		public ITerminalNode Eof() { return GetToken(plcsimParser.Eof, 0); }
 		public SeparatorContext[] separator() {
@@ -290,7 +287,7 @@ public partial class plcsimParser : Parser {
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 52; command();
+			State = 52; instruction();
 			State = 63;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
@@ -362,7 +359,7 @@ public partial class plcsimParser : Parser {
 		return _localctx;
 	}
 
-	public partial class CommandContext : ParserRuleContext {
+	public partial class InstructionContext : ParserRuleContext {
 		public IToken inst;
 		public IToken suffix;
 		public OperatorContext opr;
@@ -375,22 +372,22 @@ public partial class plcsimParser : Parser {
 		public OperatorContext @operator(int i) {
 			return GetRuleContext<OperatorContext>(i);
 		}
-		public CommandContext(ParserRuleContext parent, int invokingState)
+		public InstructionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_command; } }
+		public override int RuleIndex { get { return RULE_instruction; } }
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IplcsimVisitor<TResult> typedVisitor = visitor as IplcsimVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitCommand(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public CommandContext command() {
-		CommandContext _localctx = new CommandContext(Context, State);
-		EnterRule(_localctx, 6, RULE_command);
+	public InstructionContext instruction() {
+		InstructionContext _localctx = new InstructionContext(Context, State);
+		EnterRule(_localctx, 6, RULE_instruction);
 		int _la;
 		try {
 			State = 87;

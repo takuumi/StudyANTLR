@@ -42,12 +42,14 @@
     <Compile Include="plcsimParser.cs" />
     <Compile Include="plcsimVisitor.cs" />
     <Compile Include="PLCSimulator.cs" />
-    <Compile Include="Visitor.cs" />
+    <Compile Include="InterpreterImpl.cs" />
     <Compile Include="Plc.cs" />
-    <Compile Include="InstTable.cs" />
     <Compile Include="ErrString.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="IOperand.cs" />
+    <Compile Include="InstructionAnalyzer.cs" />
+    <Compile Include="OperandAnalyzer.cs" />
+    <Compile Include="InstructionExecuter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="submit1.g4" />

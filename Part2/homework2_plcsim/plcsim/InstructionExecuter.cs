@@ -2,61 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Antlr4.Runtime.Misc;
-using static plcsim.InstTable;
 
 namespace plcsim
 {
-    class Visitor : plcsimBaseVisitor<Visitor.Result>
+    static class InstructionExecuter
     {
-        private readonly Plc _plc;
-        public Visitor(Plc plc)
-        {
-            _plc = plc;
-        }
 
-        protected override Result DefaultResult => new Result(false, 0);
-
-        public override Result VisitInput([NotNull] plcsimParser.InputContext context)
-        {
-            foreach (var e in context.oneline()) {
-                var ret = Visit(e);
-                if (!ret.IsSuccess) return ret;
-            }
-            return new Result(true, 0);
-        }
-
-        public override Result VisitPlcsim_memonic([NotNull] plcsimParser.Plcsim_memonicContext context)
-        {
-            return base.VisitPlcsim_memonic(context);
-        }
-
-        public override Result VisitPlcsim_main([NotNull] plcsimParser.Plcsim_mainContext context)
-        {
-            //命令語
-            var retInst = Visit(context.command());
-            var inst = retInst.Info as Instruction;
-
-            //オペランド
-            var operands = new List<IOperand>();
-            foreach (var item in context.operand())
-            {
-                var retOpe = Visit(item);
-                if (!retOpe.IsSuccess) return retOpe;
-                operands.Add(retOpe.Info as IOperand);
-            }
-
-            // 命令語実行
-            var errid = ExecuteInst(inst, operands);
-            if (errid != ErrString.ErrID.None)
-            {
-                return new Result(false, errid);
-            }
-
-            return new Result(true, 0);
-        }
-
-        private ErrString.ErrID ExecuteInst(Instruction inst, List<IOperand> operands)
+        internal static ErrString.ErrID Execute(Plc _plc, InstTable.Instruction inst, List<IOperand> operands)
         {
             switch (inst.Name)
             {
@@ -142,56 +94,7 @@ namespace plcsim
             return ErrString.ErrID.None;
         }
 
-        public override Result VisitCommand([NotNull] plcsimParser.CommandContext context)
-        {
-            // 命令語
-            var inst = context.Start.Text;
-            if (!InstTable.Table.ContainsKey(inst))
-            {
-                return new Result(false, ErrString.ErrID.UnSupportInst);
-            }
 
-            // サッフィックス
-            string strSuf = "";
-            if(context.suffix !=null)
-            {
-                strSuf = context.suffix.Text;
-            }
 
-            return new Result(true, new Instruction { Name = inst, Suffix = strSuf ,Attribute = InstTable.Table[inst] } );
-        }
-
-        public override Result VisitOperand([NotNull] plcsimParser.OperandContext context)
-        {
-            // TODO 間接とか、インデックスとか。
-            var ident = context.IDENTIFIER();
-            var deviceStr = ident.GetText().ToUpper();
-
-            Device device;
-            if (!Device.TryParse(deviceStr, out device))
-            {
-                return new Result(false, ErrString.ErrID.UnSupportDevice);
-            }
-            return new Result(true, device);
-        }
-               
-
-        // 結果クラス
-        public class Result
-        {
-            public Result(bool isSuccess, object info)
-            {
-                IsSuccess = isSuccess;
-                Info = info;
-            }
-
-            public void Deconstruct(out bool isSuccess, out object info)
-            {
-                isSuccess = IsSuccess;
-                info = Info;
-            }
-            public bool IsSuccess { get; }
-            public object Info { get; }
-        }
     }
 }

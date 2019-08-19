@@ -59,11 +59,11 @@ public interface IplcsimVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitPlcsim_main([NotNull] plcsimParser.Plcsim_mainContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="plcsimParser.command"/>.
+	/// Visit a parse tree produced by <see cref="plcsimParser.instruction"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitCommand([NotNull] plcsimParser.CommandContext context);
+	Result VisitInstruction([NotNull] plcsimParser.InstructionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="plcsimParser.separator"/>.
 	/// </summary>

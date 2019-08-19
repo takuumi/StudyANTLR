@@ -77,7 +77,7 @@ public partial class plcsimBaseVisitor<Result> : AbstractParseTreeVisitor<Result
 	/// <return>The visitor result.</return>
 	public virtual Result VisitPlcsim_main([NotNull] plcsimParser.Plcsim_mainContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="plcsimParser.command"/>.
+	/// Visit a parse tree produced by <see cref="plcsimParser.instruction"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -85,7 +85,7 @@ public partial class plcsimBaseVisitor<Result> : AbstractParseTreeVisitor<Result
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitCommand([NotNull] plcsimParser.CommandContext context) { return VisitChildren(context); }
+	public virtual Result VisitInstruction([NotNull] plcsimParser.InstructionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="plcsimParser.separator"/>.
 	/// <para>
