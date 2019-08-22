@@ -83,11 +83,47 @@ public interface IplcsimVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitOperator([NotNull] plcsimParser.OperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="plcsimParser.operand"/>.
+	/// Visit a parse tree produced by the <c>plcsim_literal</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitOperand([NotNull] plcsimParser.OperandContext context);
+	Result VisitPlcsim_literal([NotNull] plcsimParser.Plcsim_literalContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_wordbit</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPlcsim_wordbit([NotNull] plcsimParser.Plcsim_wordbitContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_local</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPlcsim_local([NotNull] plcsimParser.Plcsim_localContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_indexed</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPlcsim_indexed([NotNull] plcsimParser.Plcsim_indexedContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_indirect</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPlcsim_indirect([NotNull] plcsimParser.Plcsim_indirectContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_ident</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPlcsim_ident([NotNull] plcsimParser.Plcsim_identContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="plcsimParser.index"/>.
 	/// </summary>

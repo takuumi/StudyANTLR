@@ -15,7 +15,13 @@ namespace plcsim
             Address = address;
         }
 
-        public Boolean IsDevice() { return true; }
+        public bool IsDevice() { return true; }
+
+        public bool ToDeviceAddress(Plc plc, out Device device)
+        {
+            device = new Device(this.Code, this.Address);
+            return true;
+        }
 
         public Device GetIncrementDevice(int Value)
         {

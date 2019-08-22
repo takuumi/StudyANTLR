@@ -43,11 +43,22 @@ namespace plcsim
                             // 第２引数はデバイスじゃないとNG
                             return ErrString.ErrID.UnSupportArgType;
                         }
-                        var ope1 = operands.ElementAt(1) as Device;
+
+                        // 第２引数の解釈
+                        Device ope1;
+                        if (!operands.ElementAt(1).ToDeviceAddress(_plc, out ope1))
+                        {
+                            return ErrString.ErrID.NoDeviceAddress;
+                        }
 
                         if (operands.ElementAt(0).IsDevice())
                         {
-                            var ope0 = operands.ElementAt(0) as Device;
+                            // 第１引数の解釈
+                            Device ope0;
+                            if (!operands.ElementAt(0).ToDeviceAddress(_plc, out ope0))
+                            {
+                                return ErrString.ErrID.NoDeviceAddress;
+                            }
 
                             // オペランドの存在確認
                             if (!_plc.WordDevices.ContainsKey(ope0.ToString()))

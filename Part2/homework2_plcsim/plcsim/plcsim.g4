@@ -40,17 +40,17 @@ operator
     ;
 
 operand
-    : literal
-    | operand COLON index       // DM10:z1, DM10#1
-    | indirect                  // *DM109, *@DM200, #TM10, #TM0.1
-    | wordbit                   // DM10.1
-    | local                     // @DM10, @DM10.1
-    | IDENTIFIER                // hoge (variables), _MAIN, DM100, DM10_0
+    : literal                                   #plcsim_literal
+    | baseope=operand COLON indexope=index      #plcsim_indexed
+    | indirect                                  #plcsim_indirect
+    | wordbit                                   #plcsim_wordbit
+    | local                                     #plcsim_local
+    | IDENTIFIER                                #plcsim_ident
     ;
 
 index
     : IDENTIFIER
-    | const_number
+//    | const_number                            //課題２はここまで対応しない
     ;
 
 wordbit

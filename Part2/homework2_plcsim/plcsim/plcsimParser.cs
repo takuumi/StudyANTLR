@@ -630,34 +630,84 @@ public partial class plcsimParser : Parser {
 	}
 
 	public partial class OperandContext : ParserRuleContext {
-		public LiteralContext literal() {
-			return GetRuleContext<LiteralContext>(0);
-		}
-		public IndirectContext indirect() {
-			return GetRuleContext<IndirectContext>(0);
-		}
-		public WordbitContext wordbit() {
-			return GetRuleContext<WordbitContext>(0);
-		}
-		public LocalContext local() {
-			return GetRuleContext<LocalContext>(0);
-		}
-		public ITerminalNode IDENTIFIER() { return GetToken(plcsimParser.IDENTIFIER, 0); }
-		public OperandContext operand() {
-			return GetRuleContext<OperandContext>(0);
-		}
-		public ITerminalNode COLON() { return GetToken(plcsimParser.COLON, 0); }
-		public IndexContext index() {
-			return GetRuleContext<IndexContext>(0);
-		}
 		public OperandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_operand; } }
+	 
+		public OperandContext() { }
+		public virtual void CopyFrom(OperandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class Plcsim_literalContext : OperandContext {
+		public LiteralContext literal() {
+			return GetRuleContext<LiteralContext>(0);
+		}
+		public Plcsim_literalContext(OperandContext context) { CopyFrom(context); }
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IplcsimVisitor<TResult> typedVisitor = visitor as IplcsimVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitOperand(this);
+			if (typedVisitor != null) return typedVisitor.VisitPlcsim_literal(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class Plcsim_wordbitContext : OperandContext {
+		public WordbitContext wordbit() {
+			return GetRuleContext<WordbitContext>(0);
+		}
+		public Plcsim_wordbitContext(OperandContext context) { CopyFrom(context); }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IplcsimVisitor<TResult> typedVisitor = visitor as IplcsimVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPlcsim_wordbit(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class Plcsim_localContext : OperandContext {
+		public LocalContext local() {
+			return GetRuleContext<LocalContext>(0);
+		}
+		public Plcsim_localContext(OperandContext context) { CopyFrom(context); }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IplcsimVisitor<TResult> typedVisitor = visitor as IplcsimVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPlcsim_local(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class Plcsim_indexedContext : OperandContext {
+		public OperandContext baseope;
+		public IndexContext indexope;
+		public ITerminalNode COLON() { return GetToken(plcsimParser.COLON, 0); }
+		public OperandContext operand() {
+			return GetRuleContext<OperandContext>(0);
+		}
+		public IndexContext index() {
+			return GetRuleContext<IndexContext>(0);
+		}
+		public Plcsim_indexedContext(OperandContext context) { CopyFrom(context); }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IplcsimVisitor<TResult> typedVisitor = visitor as IplcsimVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPlcsim_indexed(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class Plcsim_indirectContext : OperandContext {
+		public IndirectContext indirect() {
+			return GetRuleContext<IndirectContext>(0);
+		}
+		public Plcsim_indirectContext(OperandContext context) { CopyFrom(context); }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IplcsimVisitor<TResult> typedVisitor = visitor as IplcsimVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPlcsim_indirect(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class Plcsim_identContext : OperandContext {
+		public ITerminalNode IDENTIFIER() { return GetToken(plcsimParser.IDENTIFIER, 0); }
+		public Plcsim_identContext(OperandContext context) { CopyFrom(context); }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IplcsimVisitor<TResult> typedVisitor = visitor as IplcsimVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPlcsim_ident(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -683,26 +733,42 @@ public partial class plcsimParser : Parser {
 			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 			case 1:
 				{
+				_localctx = new Plcsim_literalContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+
 				State = 106; literal();
 				}
 				break;
 			case 2:
 				{
+				_localctx = new Plcsim_indirectContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
 				State = 107; indirect();
 				}
 				break;
 			case 3:
 				{
+				_localctx = new Plcsim_wordbitContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
 				State = 108; wordbit();
 				}
 				break;
 			case 4:
 				{
+				_localctx = new Plcsim_localContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
 				State = 109; local();
 				}
 				break;
 			case 5:
 				{
+				_localctx = new Plcsim_identContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
 				State = 110; Match(IDENTIFIER);
 				}
 				break;
@@ -718,12 +784,13 @@ public partial class plcsimParser : Parser {
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new OperandContext(_parentctx, _parentState);
+					_localctx = new Plcsim_indexedContext(new OperandContext(_parentctx, _parentState));
+					((Plcsim_indexedContext)_localctx).baseope = _prevctx;
 					PushNewRecursionContext(_localctx, _startState, RULE_operand);
 					State = 113;
 					if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
 					State = 114; Match(COLON);
-					State = 115; index();
+					State = 115; ((Plcsim_indexedContext)_localctx).indexope = index();
 					}
 					} 
 				}
@@ -746,9 +813,6 @@ public partial class plcsimParser : Parser {
 
 	public partial class IndexContext : ParserRuleContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(plcsimParser.IDENTIFIER, 0); }
-		public Const_numberContext const_number() {
-			return GetRuleContext<Const_numberContext>(0);
-		}
 		public IndexContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -766,26 +830,9 @@ public partial class plcsimParser : Parser {
 		IndexContext _localctx = new IndexContext(Context, State);
 		EnterRule(_localctx, 16, RULE_index);
 		try {
-			State = 123;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case IDENTIFIER:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 121; Match(IDENTIFIER);
-				}
-				break;
-			case DOTINT:
-			case CONST_DEC_NUMBER:
-			case CONST_HEX_NUMBER:
-			case CONST_FLOAT:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 122; const_number();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 121; Match(IDENTIFIER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -821,8 +868,8 @@ public partial class plcsimParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 125; Match(IDENTIFIER);
-			State = 126; Match(DOTINT);
+			State = 123; Match(IDENTIFIER);
+			State = 124; Match(DOTINT);
 			}
 		}
 		catch (RecognitionException re) {
@@ -861,34 +908,34 @@ public partial class plcsimParser : Parser {
 		IndirectContext _localctx = new IndirectContext(Context, State);
 		EnterRule(_localctx, 20, RULE_indirect);
 		try {
-			State = 135;
+			State = 133;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,17,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,16,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 128; Match(MUL_OR_INDIRECT);
-				State = 129; Match(IDENTIFIER);
+				State = 126; Match(MUL_OR_INDIRECT);
+				State = 127; Match(IDENTIFIER);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 130; Match(MUL_OR_INDIRECT);
-				State = 131; local();
+				State = 128; Match(MUL_OR_INDIRECT);
+				State = 129; local();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 132; Match(OLDINDIRECT);
+				State = 130; Match(OLDINDIRECT);
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 133; Match(OLDINDIRECT);
-				State = 134; Match(DOTINT);
+				State = 131; Match(OLDINDIRECT);
+				State = 132; Match(DOTINT);
 				}
 				break;
 			}
@@ -928,28 +975,28 @@ public partial class plcsimParser : Parser {
 		LocalContext _localctx = new LocalContext(Context, State);
 		EnterRule(_localctx, 22, RULE_local);
 		try {
-			State = 143;
+			State = 141;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,17,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 137; Match(ATMARK);
-				State = 138; Match(IDENTIFIER);
+				State = 135; Match(ATMARK);
+				State = 136; Match(IDENTIFIER);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 139; Match(ATMARK);
-				State = 140; wordbit();
+				State = 137; Match(ATMARK);
+				State = 138; wordbit();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 141; Match(ATMARK);
-				State = 142; Match(CONST_DEC_NUMBER);
+				State = 139; Match(ATMARK);
+				State = 140; Match(CONST_DEC_NUMBER);
 				}
 				break;
 			}
@@ -990,13 +1037,13 @@ public partial class plcsimParser : Parser {
 		LiteralContext _localctx = new LiteralContext(Context, State);
 		EnterRule(_localctx, 24, RULE_literal);
 		try {
-			State = 148;
+			State = 146;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CONST_STRING:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 145; const_string();
+				State = 143; const_string();
 				}
 				break;
 			case DOTINT:
@@ -1005,13 +1052,13 @@ public partial class plcsimParser : Parser {
 			case CONST_FLOAT:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 146; const_number();
+				State = 144; const_number();
 				}
 				break;
 			case UNDEFINE:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 147; Match(UNDEFINE);
+				State = 145; Match(UNDEFINE);
 				}
 				break;
 			default:
@@ -1056,26 +1103,26 @@ public partial class plcsimParser : Parser {
 		Const_numberContext _localctx = new Const_numberContext(Context, State);
 		EnterRule(_localctx, 26, RULE_const_number);
 		try {
-			State = 153;
+			State = 151;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CONST_DEC_NUMBER:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 150; const_dec_number();
+				State = 148; const_dec_number();
 				}
 				break;
 			case CONST_HEX_NUMBER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 151; const_hex_number();
+				State = 149; const_hex_number();
 				}
 				break;
 			case DOTINT:
 			case CONST_FLOAT:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 152; const_float();
+				State = 150; const_float();
 				}
 				break;
 			default:
@@ -1114,7 +1161,7 @@ public partial class plcsimParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 155; Match(CONST_STRING);
+			State = 153; Match(CONST_STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1149,7 +1196,7 @@ public partial class plcsimParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 157; Match(CONST_DEC_NUMBER);
+			State = 155; Match(CONST_DEC_NUMBER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1184,7 +1231,7 @@ public partial class plcsimParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 159; Match(CONST_HEX_NUMBER);
+			State = 157; Match(CONST_HEX_NUMBER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1221,7 +1268,7 @@ public partial class plcsimParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 161;
+			State = 159;
 			_la = TokenStream.LA(1);
 			if ( !(_la==DOTINT || _la==CONST_FLOAT) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1258,7 +1305,7 @@ public partial class plcsimParser : Parser {
 
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\x1B', '\xA6', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
+		'\x5964', '\x3', '\x1B', '\xA4', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
 		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x4', 
 		'\x6', '\t', '\x6', '\x4', '\a', '\t', '\a', '\x4', '\b', '\t', '\b', 
 		'\x4', '\t', '\t', '\t', '\x4', '\n', '\t', '\n', '\x4', '\v', '\t', '\v', 
@@ -1283,32 +1330,32 @@ public partial class plcsimParser : Parser {
 		'\x3', '\t', '\x3', '\t', '\x3', '\t', '\x3', '\t', '\x5', '\t', 'r', 
 		'\n', '\t', '\x3', '\t', '\x3', '\t', '\x3', '\t', '\a', '\t', 'w', '\n', 
 		'\t', '\f', '\t', '\xE', '\t', 'z', '\v', '\t', '\x3', '\n', '\x3', '\n', 
-		'\x5', '\n', '~', '\n', '\n', '\x3', '\v', '\x3', '\v', '\x3', '\v', '\x3', 
-		'\f', '\x3', '\f', '\x3', '\f', '\x3', '\f', '\x3', '\f', '\x3', '\f', 
-		'\x3', '\f', '\x5', '\f', '\x8A', '\n', '\f', '\x3', '\r', '\x3', '\r', 
-		'\x3', '\r', '\x3', '\r', '\x3', '\r', '\x3', '\r', '\x5', '\r', '\x92', 
-		'\n', '\r', '\x3', '\xE', '\x3', '\xE', '\x3', '\xE', '\x5', '\xE', '\x97', 
-		'\n', '\xE', '\x3', '\xF', '\x3', '\xF', '\x3', '\xF', '\x5', '\xF', '\x9C', 
-		'\n', '\xF', '\x3', '\x10', '\x3', '\x10', '\x3', '\x11', '\x3', '\x11', 
-		'\x3', '\x12', '\x3', '\x12', '\x3', '\x13', '\x3', '\x13', '\x3', '\x13', 
-		'\x2', '\x3', '\x10', '\x14', '\x2', '\x4', '\x6', '\b', '\n', '\f', '\xE', 
-		'\x10', '\x12', '\x14', '\x16', '\x18', '\x1A', '\x1C', '\x1E', ' ', '\"', 
-		'$', '\x2', '\x4', '\x3', '\x2', '\x3', '\r', '\x4', '\x2', '\x11', '\x11', 
-		'\x18', '\x18', '\x2', '\xB0', '\x2', ')', '\x3', '\x2', '\x2', '\x2', 
+		'\x3', '\v', '\x3', '\v', '\x3', '\v', '\x3', '\f', '\x3', '\f', '\x3', 
+		'\f', '\x3', '\f', '\x3', '\f', '\x3', '\f', '\x3', '\f', '\x5', '\f', 
+		'\x88', '\n', '\f', '\x3', '\r', '\x3', '\r', '\x3', '\r', '\x3', '\r', 
+		'\x3', '\r', '\x3', '\r', '\x5', '\r', '\x90', '\n', '\r', '\x3', '\xE', 
+		'\x3', '\xE', '\x3', '\xE', '\x5', '\xE', '\x95', '\n', '\xE', '\x3', 
+		'\xF', '\x3', '\xF', '\x3', '\xF', '\x5', '\xF', '\x9A', '\n', '\xF', 
+		'\x3', '\x10', '\x3', '\x10', '\x3', '\x11', '\x3', '\x11', '\x3', '\x12', 
+		'\x3', '\x12', '\x3', '\x13', '\x3', '\x13', '\x3', '\x13', '\x2', '\x3', 
+		'\x10', '\x14', '\x2', '\x4', '\x6', '\b', '\n', '\f', '\xE', '\x10', 
+		'\x12', '\x14', '\x16', '\x18', '\x1A', '\x1C', '\x1E', ' ', '\"', '$', 
+		'\x2', '\x4', '\x3', '\x2', '\x3', '\r', '\x4', '\x2', '\x11', '\x11', 
+		'\x18', '\x18', '\x2', '\xAD', '\x2', ')', '\x3', '\x2', '\x2', '\x2', 
 		'\x4', '.', '\x3', '\x2', '\x2', '\x2', '\x6', '\x33', '\x3', '\x2', '\x2', 
 		'\x2', '\b', 'Y', '\x3', '\x2', '\x2', '\x2', '\n', '\\', '\x3', '\x2', 
 		'\x2', '\x2', '\f', '`', '\x3', '\x2', '\x2', '\x2', '\xE', 'i', '\x3', 
 		'\x2', '\x2', '\x2', '\x10', 'q', '\x3', '\x2', '\x2', '\x2', '\x12', 
-		'}', '\x3', '\x2', '\x2', '\x2', '\x14', '\x7F', '\x3', '\x2', '\x2', 
-		'\x2', '\x16', '\x89', '\x3', '\x2', '\x2', '\x2', '\x18', '\x91', '\x3', 
-		'\x2', '\x2', '\x2', '\x1A', '\x96', '\x3', '\x2', '\x2', '\x2', '\x1C', 
-		'\x9B', '\x3', '\x2', '\x2', '\x2', '\x1E', '\x9D', '\x3', '\x2', '\x2', 
-		'\x2', ' ', '\x9F', '\x3', '\x2', '\x2', '\x2', '\"', '\xA1', '\x3', '\x2', 
-		'\x2', '\x2', '$', '\xA3', '\x3', '\x2', '\x2', '\x2', '&', '(', '\x5', 
-		'\x4', '\x3', '\x2', '\'', '&', '\x3', '\x2', '\x2', '\x2', '(', '+', 
-		'\x3', '\x2', '\x2', '\x2', ')', '\'', '\x3', '\x2', '\x2', '\x2', ')', 
-		'*', '\x3', '\x2', '\x2', '\x2', '*', '\x3', '\x3', '\x2', '\x2', '\x2', 
-		'+', ')', '\x3', '\x2', '\x2', '\x2', ',', '/', '\x5', '\x6', '\x4', '\x2', 
+		'{', '\x3', '\x2', '\x2', '\x2', '\x14', '}', '\x3', '\x2', '\x2', '\x2', 
+		'\x16', '\x87', '\x3', '\x2', '\x2', '\x2', '\x18', '\x8F', '\x3', '\x2', 
+		'\x2', '\x2', '\x1A', '\x94', '\x3', '\x2', '\x2', '\x2', '\x1C', '\x99', 
+		'\x3', '\x2', '\x2', '\x2', '\x1E', '\x9B', '\x3', '\x2', '\x2', '\x2', 
+		' ', '\x9D', '\x3', '\x2', '\x2', '\x2', '\"', '\x9F', '\x3', '\x2', '\x2', 
+		'\x2', '$', '\xA1', '\x3', '\x2', '\x2', '\x2', '&', '(', '\x5', '\x4', 
+		'\x3', '\x2', '\'', '&', '\x3', '\x2', '\x2', '\x2', '(', '+', '\x3', 
+		'\x2', '\x2', '\x2', ')', '\'', '\x3', '\x2', '\x2', '\x2', ')', '*', 
+		'\x3', '\x2', '\x2', '\x2', '*', '\x3', '\x3', '\x2', '\x2', '\x2', '+', 
+		')', '\x3', '\x2', '\x2', '\x2', ',', '/', '\x5', '\x6', '\x4', '\x2', 
 		'-', '/', '\x5', '\f', '\a', '\x2', '.', ',', '\x3', '\x2', '\x2', '\x2', 
 		'.', '-', '\x3', '\x2', '\x2', '\x2', '/', '\x5', '\x3', '\x2', '\x2', 
 		'\x2', '\x30', '\x32', '\x5', '\n', '\x6', '\x2', '\x31', '\x30', '\x3', 
@@ -1360,40 +1407,38 @@ public partial class plcsimParser : Parser {
 		'u', 'w', '\x5', '\x12', '\n', '\x2', 'v', 's', '\x3', '\x2', '\x2', '\x2', 
 		'w', 'z', '\x3', '\x2', '\x2', '\x2', 'x', 'v', '\x3', '\x2', '\x2', '\x2', 
 		'x', 'y', '\x3', '\x2', '\x2', '\x2', 'y', '\x11', '\x3', '\x2', '\x2', 
-		'\x2', 'z', 'x', '\x3', '\x2', '\x2', '\x2', '{', '~', '\a', '\x1B', '\x2', 
-		'\x2', '|', '~', '\x5', '\x1C', '\xF', '\x2', '}', '{', '\x3', '\x2', 
-		'\x2', '\x2', '}', '|', '\x3', '\x2', '\x2', '\x2', '~', '\x13', '\x3', 
-		'\x2', '\x2', '\x2', '\x7F', '\x80', '\a', '\x1B', '\x2', '\x2', '\x80', 
-		'\x81', '\a', '\x11', '\x2', '\x2', '\x81', '\x15', '\x3', '\x2', '\x2', 
-		'\x2', '\x82', '\x83', '\a', '\b', '\x2', '\x2', '\x83', '\x8A', '\a', 
-		'\x1B', '\x2', '\x2', '\x84', '\x85', '\a', '\b', '\x2', '\x2', '\x85', 
-		'\x8A', '\x5', '\x18', '\r', '\x2', '\x86', '\x8A', '\a', '\x12', '\x2', 
-		'\x2', '\x87', '\x88', '\a', '\x12', '\x2', '\x2', '\x88', '\x8A', '\a', 
-		'\x11', '\x2', '\x2', '\x89', '\x82', '\x3', '\x2', '\x2', '\x2', '\x89', 
-		'\x84', '\x3', '\x2', '\x2', '\x2', '\x89', '\x86', '\x3', '\x2', '\x2', 
-		'\x2', '\x89', '\x87', '\x3', '\x2', '\x2', '\x2', '\x8A', '\x17', '\x3', 
-		'\x2', '\x2', '\x2', '\x8B', '\x8C', '\a', '\xF', '\x2', '\x2', '\x8C', 
-		'\x92', '\a', '\x1B', '\x2', '\x2', '\x8D', '\x8E', '\a', '\xF', '\x2', 
-		'\x2', '\x8E', '\x92', '\x5', '\x14', '\v', '\x2', '\x8F', '\x90', '\a', 
-		'\xF', '\x2', '\x2', '\x90', '\x92', '\a', '\x16', '\x2', '\x2', '\x91', 
-		'\x8B', '\x3', '\x2', '\x2', '\x2', '\x91', '\x8D', '\x3', '\x2', '\x2', 
-		'\x2', '\x91', '\x8F', '\x3', '\x2', '\x2', '\x2', '\x92', '\x19', '\x3', 
-		'\x2', '\x2', '\x2', '\x93', '\x97', '\x5', '\x1E', '\x10', '\x2', '\x94', 
-		'\x97', '\x5', '\x1C', '\xF', '\x2', '\x95', '\x97', '\a', '\x10', '\x2', 
-		'\x2', '\x96', '\x93', '\x3', '\x2', '\x2', '\x2', '\x96', '\x94', '\x3', 
-		'\x2', '\x2', '\x2', '\x96', '\x95', '\x3', '\x2', '\x2', '\x2', '\x97', 
-		'\x1B', '\x3', '\x2', '\x2', '\x2', '\x98', '\x9C', '\x5', ' ', '\x11', 
-		'\x2', '\x99', '\x9C', '\x5', '\"', '\x12', '\x2', '\x9A', '\x9C', '\x5', 
-		'$', '\x13', '\x2', '\x9B', '\x98', '\x3', '\x2', '\x2', '\x2', '\x9B', 
-		'\x99', '\x3', '\x2', '\x2', '\x2', '\x9B', '\x9A', '\x3', '\x2', '\x2', 
-		'\x2', '\x9C', '\x1D', '\x3', '\x2', '\x2', '\x2', '\x9D', '\x9E', '\a', 
-		'\x19', '\x2', '\x2', '\x9E', '\x1F', '\x3', '\x2', '\x2', '\x2', '\x9F', 
-		'\xA0', '\a', '\x16', '\x2', '\x2', '\xA0', '!', '\x3', '\x2', '\x2', 
-		'\x2', '\xA1', '\xA2', '\a', '\x17', '\x2', '\x2', '\xA2', '#', '\x3', 
-		'\x2', '\x2', '\x2', '\xA3', '\xA4', '\t', '\x3', '\x2', '\x2', '\xA4', 
-		'%', '\x3', '\x2', '\x2', '\x2', '\x17', ')', '.', '\x33', '<', '\x41', 
-		'G', 'J', 'N', 'T', 'W', 'Y', '^', '\x64', 'g', 'q', 'x', '}', '\x89', 
-		'\x91', '\x96', '\x9B',
+		'\x2', 'z', 'x', '\x3', '\x2', '\x2', '\x2', '{', '|', '\a', '\x1B', '\x2', 
+		'\x2', '|', '\x13', '\x3', '\x2', '\x2', '\x2', '}', '~', '\a', '\x1B', 
+		'\x2', '\x2', '~', '\x7F', '\a', '\x11', '\x2', '\x2', '\x7F', '\x15', 
+		'\x3', '\x2', '\x2', '\x2', '\x80', '\x81', '\a', '\b', '\x2', '\x2', 
+		'\x81', '\x88', '\a', '\x1B', '\x2', '\x2', '\x82', '\x83', '\a', '\b', 
+		'\x2', '\x2', '\x83', '\x88', '\x5', '\x18', '\r', '\x2', '\x84', '\x88', 
+		'\a', '\x12', '\x2', '\x2', '\x85', '\x86', '\a', '\x12', '\x2', '\x2', 
+		'\x86', '\x88', '\a', '\x11', '\x2', '\x2', '\x87', '\x80', '\x3', '\x2', 
+		'\x2', '\x2', '\x87', '\x82', '\x3', '\x2', '\x2', '\x2', '\x87', '\x84', 
+		'\x3', '\x2', '\x2', '\x2', '\x87', '\x85', '\x3', '\x2', '\x2', '\x2', 
+		'\x88', '\x17', '\x3', '\x2', '\x2', '\x2', '\x89', '\x8A', '\a', '\xF', 
+		'\x2', '\x2', '\x8A', '\x90', '\a', '\x1B', '\x2', '\x2', '\x8B', '\x8C', 
+		'\a', '\xF', '\x2', '\x2', '\x8C', '\x90', '\x5', '\x14', '\v', '\x2', 
+		'\x8D', '\x8E', '\a', '\xF', '\x2', '\x2', '\x8E', '\x90', '\a', '\x16', 
+		'\x2', '\x2', '\x8F', '\x89', '\x3', '\x2', '\x2', '\x2', '\x8F', '\x8B', 
+		'\x3', '\x2', '\x2', '\x2', '\x8F', '\x8D', '\x3', '\x2', '\x2', '\x2', 
+		'\x90', '\x19', '\x3', '\x2', '\x2', '\x2', '\x91', '\x95', '\x5', '\x1E', 
+		'\x10', '\x2', '\x92', '\x95', '\x5', '\x1C', '\xF', '\x2', '\x93', '\x95', 
+		'\a', '\x10', '\x2', '\x2', '\x94', '\x91', '\x3', '\x2', '\x2', '\x2', 
+		'\x94', '\x92', '\x3', '\x2', '\x2', '\x2', '\x94', '\x93', '\x3', '\x2', 
+		'\x2', '\x2', '\x95', '\x1B', '\x3', '\x2', '\x2', '\x2', '\x96', '\x9A', 
+		'\x5', ' ', '\x11', '\x2', '\x97', '\x9A', '\x5', '\"', '\x12', '\x2', 
+		'\x98', '\x9A', '\x5', '$', '\x13', '\x2', '\x99', '\x96', '\x3', '\x2', 
+		'\x2', '\x2', '\x99', '\x97', '\x3', '\x2', '\x2', '\x2', '\x99', '\x98', 
+		'\x3', '\x2', '\x2', '\x2', '\x9A', '\x1D', '\x3', '\x2', '\x2', '\x2', 
+		'\x9B', '\x9C', '\a', '\x19', '\x2', '\x2', '\x9C', '\x1F', '\x3', '\x2', 
+		'\x2', '\x2', '\x9D', '\x9E', '\a', '\x16', '\x2', '\x2', '\x9E', '!', 
+		'\x3', '\x2', '\x2', '\x2', '\x9F', '\xA0', '\a', '\x17', '\x2', '\x2', 
+		'\xA0', '#', '\x3', '\x2', '\x2', '\x2', '\xA1', '\xA2', '\t', '\x3', 
+		'\x2', '\x2', '\xA2', '%', '\x3', '\x2', '\x2', '\x2', '\x16', ')', '.', 
+		'\x33', '<', '\x41', 'G', 'J', 'N', 'T', 'W', 'Y', '^', '\x64', 'g', 'q', 
+		'x', '\x87', '\x8F', '\x94', '\x99',
 	};
 
 	public static readonly ATN _ATN =

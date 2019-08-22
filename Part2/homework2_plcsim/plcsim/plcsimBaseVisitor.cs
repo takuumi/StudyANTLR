@@ -117,7 +117,8 @@ public partial class plcsimBaseVisitor<Result> : AbstractParseTreeVisitor<Result
 	/// <return>The visitor result.</return>
 	public virtual Result VisitOperator([NotNull] plcsimParser.OperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="plcsimParser.operand"/>.
+	/// Visit a parse tree produced by the <c>plcsim_literal</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -125,7 +126,62 @@ public partial class plcsimBaseVisitor<Result> : AbstractParseTreeVisitor<Result
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitOperand([NotNull] plcsimParser.OperandContext context) { return VisitChildren(context); }
+	public virtual Result VisitPlcsim_literal([NotNull] plcsimParser.Plcsim_literalContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_wordbit</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPlcsim_wordbit([NotNull] plcsimParser.Plcsim_wordbitContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_local</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPlcsim_local([NotNull] plcsimParser.Plcsim_localContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_indexed</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPlcsim_indexed([NotNull] plcsimParser.Plcsim_indexedContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_indirect</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPlcsim_indirect([NotNull] plcsimParser.Plcsim_indirectContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>plcsim_ident</c>
+	/// labeled alternative in <see cref="plcsimParser.operand"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPlcsim_ident([NotNull] plcsimParser.Plcsim_identContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="plcsimParser.index"/>.
 	/// <para>

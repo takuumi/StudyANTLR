@@ -19,22 +19,55 @@ namespace plcsim
 
             return new Result(true, 0);
         }
-                    
+
         private class OperandAnalyzerImpl : plcsimBaseVisitor<Result>
         {
-            public override Result VisitOperand([NotNull] plcsimParser.OperandContext context)
+            // 通常デバイス
+            public override Result VisitPlcsim_ident([NotNull] plcsimParser.Plcsim_identContext context)
             {
-                // TODO 間接とか、インデックスとか。
-                var ident = context.IDENTIFIER();
-                var deviceStr = ident.GetText().ToUpper();
-
                 Device device;
-                if (!Device.TryParse(deviceStr, out device))
+                if (!TryParseDevice(context.IDENTIFIER().GetText().ToUpper(), out device))
                 {
                     return new Result(false, ErrString.ErrID.UnSupportDevice);
+
                 }
                 return new Result(true, device);
             }
+
+            // インデックスデバイス
+            public override Result VisitPlcsim_indexed([NotNull] plcsimParser.Plcsim_indexedContext context)
+            {
+                var baseOpe = Visit(context.baseope);
+                var IndexOpe = Visit(context.indexope);
+
+                if (!baseOpe.IsSuccess) return baseOpe;
+                if (!IndexOpe.IsSuccess) return IndexOpe;
+
+                return new Result(true, new IndexDevice(baseOpe.Info as IOperand, IndexOpe.Info as IOperand));
+            }
+
+
+            public override Result VisitIndex([NotNull] plcsimParser.IndexContext context)
+            {
+                Device device;
+                if (!TryParseDevice(context.IDENTIFIER().GetText().ToUpper(), out device))
+                {
+                    return new Result(false, ErrString.ErrID.UnSupportDevice);
+
+                }
+                return new Result(true, device);
+
+            }
+
+            private bool TryParseDevice(string strInput, out Device device)
+            {
+                if (!Device.TryParse(strInput, out device))
+                {
+                    return false;
+                }
+                return true;
+            }
+
         }
     }
 }

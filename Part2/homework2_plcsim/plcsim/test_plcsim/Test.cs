@@ -53,6 +53,35 @@ namespace test_plcsim
             Assert.AreEqual(expected2, plc.WordDevices["DM11"]);
         }
 
+        [TestCase("LD R0\nMOV DM0 DM10:DM20", 10)]
+        public void TestCaseIndexDevice(string input, int expected1)
+        {
+            Plc plc = new Plc();
+            plc.BitDevices["R0"] = true;
+            plc.WordDevices["DM0"] = 10;
+            plc.WordDevices["DM20"] = 3;
+            plc.WordDevices["DM13"] = 0;
+            Console.WriteLine(PLCSimulator.Execute(plc, input));
+            Assert.AreEqual(expected1, plc.WordDevices["DM13"]);
+        }
+
+        [TestCase("LD R0\nMOV.D DM0 DM10:DM20", 10, 5)]
+        public void TestCaseIndexDeviceSuffixD(string input, int expected1, int expected2)
+        {
+            Plc plc = new Plc();
+            plc.BitDevices["R0"] = true;
+            plc.WordDevices["DM0"] = 10;
+            plc.WordDevices["DM1"] = 5;
+            plc.WordDevices["DM20"] = 3;
+            plc.WordDevices["DM13"] = 0;
+            plc.WordDevices["DM14"] = 0;
+            Console.WriteLine(PLCSimulator.Execute(plc, input));
+            Assert.AreEqual(expected1, plc.WordDevices["DM13"]);
+            Assert.AreEqual(expected2, plc.WordDevices["DM14"]);
+
+        }
+
+
     }
 
 

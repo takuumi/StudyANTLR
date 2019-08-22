@@ -50,6 +50,7 @@
     <Compile Include="InstructionAnalyzer.cs" />
     <Compile Include="OperandAnalyzer.cs" />
     <Compile Include="InstructionExecuter.cs" />
+    <Compile Include="IndexDevice.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="submit1.g4" />

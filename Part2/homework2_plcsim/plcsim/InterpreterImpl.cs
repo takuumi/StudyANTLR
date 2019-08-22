@@ -15,8 +15,6 @@ namespace plcsim
             _plc = plc;
         }
 
-
-        // TODO もう少しうまくかけないのか？
         public override Result VisitInput([NotNull] plcsimParser.InputContext context)
         {
             foreach (var e in context.oneline())
