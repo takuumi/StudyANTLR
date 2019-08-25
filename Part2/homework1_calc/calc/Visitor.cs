@@ -5,186 +5,66 @@ using Antlr4.Runtime.Misc;
 namespace calc
 {
     class Visitor : calcBaseVisitor<Visitor.Result>
-    {        
-        protected override Result DefaultResult => new Result(false, CalcRule.None, 0);
-
-        public override Result VisitInput([NotNull] calcParser.InputContext context)
+    {
+        // 結果クラス
+        public class Result
         {
-            return Visit(context.expr());
+            public Result(bool isSuccess, CalcRule type, object value)
+            {
+                IsSuccess = isSuccess;
+                Type = type;
+                Value = value;
+            }
+
+            public void Deconstruct(out bool isSuccess, out CalcRule type, out object value)
+            {
+                isSuccess = IsSuccess;
+                type = Type;
+                value = Value;
+            }
+            public bool IsSuccess { get; }
+            public CalcRule Type { get; }
+            public object Value { get; }
         }
 
+        // 計算ルール
+        public enum CalcRule
+        {
+            None,
+            CalcInt,
+            CalcReal,
+            CalcString
+        }
+
+        //Input行の処理
+        public override Result VisitInput([NotNull] calcParser.InputContext context) => Visit(context.expr());
+ 
         //＋、ーの計算
         public override Result VisitExpr_additive([NotNull] calcParser.Expr_additiveContext context)
         {
-            var (lSuc, ltype, lValue) = Visit(context.lhs);
-            var (rSuc, rtype, rValue) = Visit(context.rhs);
-            if (!(lSuc && rSuc)) return DefaultResult;
-            try
+            switch (context.op.Type)
             {
-                checked
-                {
-                    switch (context.op.Type)
-                    {
-                        case calcParser.PLUS:
-                            if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
-                            {
-                                return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) + GetValInt(rtype, rValue));
-                            }
-                            else if ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcString))
-                            {
-                                return new Result(true, CalcRule.CalcString, (string)lValue + (string)rValue);
-                            }
-                            else if ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcReal))
-                            {
-                                return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) + GetValFloat(rtype, rValue));
-                            }
-                            else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcReal)) ||
-                                     ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcInt)))
-                            {
-                                return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) + GetValFloat(rtype, rValue));
-                            }
-                            else
-                            {
-                                return new Result(false, CalcRule.None, (int)ErrString.ErrID.UnSupportCalcRule);
-                            }
-                        case calcParser.MINUS:
-                            if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
-                            {
-                                return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) - GetValInt(rtype, rValue));
-                            }
-                            else　if ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcString))
-                            {
-                                string rStr = ((string)rValue);
-                                string lStr = ((string)lValue);
-
-                                // 元のながさチェック
-                                var lLen = lStr.Length;
-                                var retStr = lStr.Replace(rStr, "");
-
-                                if (lLen == retStr.Length)
-                                {
-                                    // 文字列の引き算に失敗
-                                    return new Result(false, CalcRule.None, (int)ErrString.ErrID.CantMinusString);
-                                } else
-                                {
-                                    // 文字列の引き算（空白Replace）に成功
-                                    return new Result(true, CalcRule.CalcString, retStr);
-                                }
-                            }
-                            else if ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcReal))
-                            {
-                                return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) - GetValFloat(rtype, rValue));
-                            }
-                            else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcReal)) ||
-                                     ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcInt)))
-                            {
-                                return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) - GetValFloat(rtype, rValue));
-                            }
-                            else
-                            {
-                                return new Result(false, CalcRule.None, (int)ErrString.ErrID.UnSupportCalcRule);
-                            }
-                        default:
-                            Debug.Assert(false);
-                            return DefaultResult;
-                    }
-                }
-            }
-            catch (OverflowException)
-            {
-                return new Result(false, CalcRule.None, (int)ErrString.ErrID.OverFlow);
+                // 足し算の計算
+                case calcParser.PLUS:
+                    return CalcAdd(context);
+                case calcParser.MINUS:
+                    return CalcMinus(context);
+                default:
+                    Debug.Assert(false);
+                    return DefaultResult;
             }
         }
 
         //＊、/の計算
         public override Result VisitExpr_multipricative([NotNull] calcParser.Expr_multipricativeContext context)
         {
-            var (lSuc, ltype, lValue) = Visit(context.lhs);
-            var (rSuc, rtype, rValue) = Visit(context.rhs);
-            if (!(lSuc && rSuc)) return DefaultResult;
-
-            try
+            switch (context.op.Type)
             {
-                checked
-                {
-                    switch (context.op.Type)
-                    {
-                        case calcParser.ASTERISK:
-                            if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
-                            {
-                                return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) * GetValInt(rtype, rValue));
-                            }
-                            else if ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcString))
-                            {
-                                Debug.Assert(false);
-                                return DefaultResult;
-                            }
-                            else if ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcReal))
-                            {
-                                return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) * GetValFloat(rtype, rValue));
-                            }
-                            else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcReal)) ||
-                                     ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcInt)))
-                            {
-                                return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) * GetValFloat(rtype, rValue));
-                            }
-                            else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcString)) ||
-                                     ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcInt)))
-                            {
-                                var iNum = 0;
-                                string str;
-                                string strReturn = "";
-                                if (ltype == CalcRule.CalcInt)
-                                {
-                                    iNum = GetValInt(ltype, lValue);
-                                    str = (string)rValue;
-                                }
-                                else
-                                {
-                                    iNum = GetValInt(rtype, rValue);
-                                    str = (string)lValue;
-                                }
-                                for (int i = 0; i < iNum; i++)
-                                {
-                                    strReturn += str;
-                                }
-
-                                return new Result(true, CalcRule.CalcString, strReturn);
-                            }
-                            else
-                            {
-                                Debug.Assert(false);
-                                return DefaultResult;
-                            }
-                        case calcParser.SLASH:
-
-                            if ((int)rValue == 0)
-                            {
-                                return new Result(false, CalcRule.None, (int)ErrString.ErrID.ZeroDiv);
-                            }
-                            else
-                            {
-                                if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
-                                {
-                                    if (((int)lValue % (int)rValue) == 0)
-                                    {
-                                        return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) / GetValInt(rtype, rValue));
-                                    } else
-                                    {
-                                        return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) / GetValFloat(rtype, rValue));                                    }
-                                }
-                                else
-                                {
-                                    return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) / GetValFloat(rtype, rValue));
-                                }
-                            }
-                        default: return DefaultResult;
-                    }
-                }
-            }
-            catch (OverflowException)
-            {
-                return new Result(false, CalcRule.None, (int)ErrString.ErrID.OverFlow);
+                case calcParser.ASTERISK:
+                    return CalcMulti(context);
+                case calcParser.SLASH:
+                    return CalcDiv(context);
+                default: return DefaultResult;
             }
         }
 
@@ -274,38 +154,219 @@ namespace calc
             return new Result(true, CalcRule.CalcString, TrimFrontAndEndDQ(context.Start.Text));
         }
 
-        // 結果クラス
-        public class Result
+
+        // 足し算
+        private Result CalcAdd([NotNull] calcParser.Expr_additiveContext context)
         {
-            public Result(bool isSuccess, CalcRule type, object value)
+            var (lSuc, ltype, lValue) = Visit(context.lhs);
+            var (rSuc, rtype, rValue) = Visit(context.rhs);
+            if (!(lSuc && rSuc))
             {
-                IsSuccess = isSuccess;
-                Type = type;
-                Value = value;
+                return new Result(false, CalcRule.None, (int)ErrString.ErrID.ArgNG);
             }
 
-            public void Deconstruct(out bool isSuccess, out CalcRule type, out object value)
+            try
             {
-                isSuccess = IsSuccess;
-                type = Type;
-                value = Value;
+                checked
+                {
+                    if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
+                    {
+                        return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) + GetValInt(rtype, rValue));
+                    }
+                    else if ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcString))
+                    {
+                        return new Result(true, CalcRule.CalcString, (string)lValue + (string)rValue);
+                    }
+                    else if ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcReal))
+                    {
+                        return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) + GetValFloat(rtype, rValue));
+                    }
+                    else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcReal)) ||
+                                ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcInt)))
+                    {
+                        return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) + GetValFloat(rtype, rValue));
+                    }
+                    else
+                    {
+                        return new Result(false, CalcRule.None, (int)ErrString.ErrID.UnSupportCalcRule);
+                    }
+                }
             }
-            public bool IsSuccess { get; }
-            public CalcRule Type { get; }
-            public object Value { get; }
+            catch (OverflowException)
+            {
+                return new Result(false, CalcRule.None, (int)ErrString.ErrID.OverFlow);
+            }
+
         }
 
-        // 計算ルール
-        public enum CalcRule
+        // 引き算
+        private Result CalcMinus([NotNull] calcParser.Expr_additiveContext context)
         {
-            None,
-            CalcInt,
-            CalcReal,
-            CalcString
+            var (lSuc, ltype, lValue) = Visit(context.lhs);
+            var (rSuc, rtype, rValue) = Visit(context.rhs);
+            if (!(lSuc && rSuc))
+            {
+                return new Result(false, CalcRule.None, (int)ErrString.ErrID.ArgNG);
+            }
+
+            try
+            {
+                checked
+                {
+                    if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
+                    {
+                        return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) - GetValInt(rtype, rValue));
+                    }
+                    else if ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcString))
+                    {
+                        string rStr = ((string)rValue);
+                        string lStr = ((string)lValue);
+
+                        // 元のながさチェック
+                        var lLen = lStr.Length;
+                        var retStr = lStr.Replace(rStr, "");
+
+                        if (lLen == retStr.Length)
+                        {
+                            // 文字列の引き算に失敗
+                            return new Result(false, CalcRule.None, (int)ErrString.ErrID.CantMinusString);
+                        }
+                        else
+                        {
+                            // 文字列の引き算（空白Replace）に成功
+                            return new Result(true, CalcRule.CalcString, retStr);
+                        }
+                    }
+                    else if ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcReal))
+                    {
+                        return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) - GetValFloat(rtype, rValue));
+                    }
+                    else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcReal)) ||
+                             ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcInt)))
+                    {
+                        return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) - GetValFloat(rtype, rValue));
+                    }
+                    else
+                    {
+                        return new Result(false, CalcRule.None, (int)ErrString.ErrID.UnSupportCalcRule);
+                    }
+                }
+            }
+            catch (OverflowException)
+            {
+                return new Result(false, CalcRule.None, (int)ErrString.ErrID.OverFlow);
+            }
+
+        }
+
+        //＊の計算
+        private Result CalcMulti([NotNull] calcParser.Expr_multipricativeContext context)
+        {
+            var (lSuc, ltype, lValue) = Visit(context.lhs);
+            var (rSuc, rtype, rValue) = Visit(context.rhs);
+            if (!(lSuc && rSuc)) return DefaultResult;
+
+            try
+            {
+                checked
+                {
+                    if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
+                    {
+                        return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) * GetValInt(rtype, rValue));
+                    }
+                    else if ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcString))
+                    {
+                        Debug.Assert(false);
+                        return DefaultResult;
+                    }
+                    else if ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcReal))
+                    {
+                        return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) * GetValFloat(rtype, rValue));
+                    }
+                    else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcReal)) ||
+                                ((ltype == CalcRule.CalcReal) && (rtype == CalcRule.CalcInt)))
+                    {
+                        return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) * GetValFloat(rtype, rValue));
+                    }
+                    else if (((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcString)) ||
+                                ((ltype == CalcRule.CalcString) && (rtype == CalcRule.CalcInt)))
+                    {
+                        var iNum = 0;
+                        string str;
+                        string strReturn = "";
+                        if (ltype == CalcRule.CalcInt)
+                        {
+                            iNum = GetValInt(ltype, lValue);
+                            str = (string)rValue;
+                        }
+                        else
+                        {
+                            iNum = GetValInt(rtype, rValue);
+                            str = (string)lValue;
+                        }
+                        for (int i = 0; i < iNum; i++)
+                        {
+                            strReturn += str;
+                        }
+
+                        return new Result(true, CalcRule.CalcString, strReturn);
+                    }
+                    else
+                    {
+                        Debug.Assert(false);
+                        return DefaultResult;
+                    }
+                }
+            }
+            catch (OverflowException)
+            {
+                return new Result(false, CalcRule.None, (int)ErrString.ErrID.OverFlow);
+            }
+        }
+
+        ///の計算
+        private Result CalcDiv([NotNull] calcParser.Expr_multipricativeContext context)
+        {
+            var (lSuc, ltype, lValue) = Visit(context.lhs);
+            var (rSuc, rtype, rValue) = Visit(context.rhs);
+            if (!(lSuc && rSuc)) return DefaultResult;
+
+            try
+            {
+                checked
+                {
+                    if ((int)rValue == 0)
+                    {
+                        return new Result(false, CalcRule.None, (int)ErrString.ErrID.ZeroDiv);
+                    }
+                    else
+                    {
+                        if ((ltype == CalcRule.CalcInt) && (rtype == CalcRule.CalcInt))
+                        {
+                            if (((int)lValue % (int)rValue) == 0)
+                            {
+                                return new Result(true, CalcRule.CalcInt, GetValInt(ltype, lValue) / GetValInt(rtype, rValue));
+                            }
+                            else
+                            {
+                                return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) / GetValFloat(rtype, rValue));
+                            }
+                        }
+                        else
+                        {
+                            return new Result(true, CalcRule.CalcReal, GetValFloat(ltype, lValue) / GetValFloat(rtype, rValue));
+                        }
+                    }
+                }
+            }
+            catch (OverflowException)
+            {
+                return new Result(false, CalcRule.None, (int)ErrString.ErrID.OverFlow);
+            }
         }
 
         // Int値の取得
-        public static int GetValInt(CalcRule type, object val)
+        private int GetValInt(CalcRule type, object val)
         {
             if (type == CalcRule.CalcInt)
             {
@@ -322,7 +383,7 @@ namespace calc
         }
 
         // real値の取得
-        public static float GetValFloat(CalcRule type, object val)
+        private float GetValFloat(CalcRule type, object val)
         {
             if (type == CalcRule.CalcInt)
             {
@@ -340,7 +401,7 @@ namespace calc
         }
 
         // ""のトリム
-        public static string TrimFrontAndEndDQ(string str)
+        private string TrimFrontAndEndDQ(string str)
         {
             str = str.Remove(0, 1);
             return str.Remove(str.Length - 1, 1);

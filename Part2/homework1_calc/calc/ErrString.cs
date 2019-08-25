@@ -10,7 +10,8 @@ namespace calc
             OverFlow = 0,
             ZeroDiv,
             UnSupportCalcRule,
-            CantMinusString
+            CantMinusString,
+            ArgNG
         }
 
         static Dictionary<ErrID, string> _dict = new Dictionary<ErrID, string>
@@ -18,7 +19,8 @@ namespace calc
             {ErrID.OverFlow, "Err.OverFlow"},
             {ErrID.ZeroDiv, "Err.ZeroDiv"},
             {ErrID.UnSupportCalcRule, "Err.UnSupportCalcRule" },
-            {ErrID.CantMinusString, "Err.CantMinusString" }
+            {ErrID.CantMinusString, "Err.CantMinusString" },
+            {ErrID.ArgNG, "ArgNG" }
         };
 
 
