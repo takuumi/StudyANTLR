@@ -1,15 +1,15 @@
-grammar STGrammer;
+grammar KVScriptGrammer;
 
 input
     : (oneline? NEWLINE)* oneline? EOF
     ;
 
 oneline
-    : stlang                            #expr_stlang
-    | linecomment                       #expr_stlinecomment
+    : kvlang                             #expr_kvlang
+    | linecomment                        #expr_kvlinecomment
     ;
 
-stlang
+kvlang
     : IDENTIFIER DEFINE expr;
 
 expr
@@ -22,9 +22,9 @@ define
 
 linecomment
     : COMMENTKEY (~NEWLINE)*;
-    
 
-DEFINE              : COLON EQUAL;
+
+DEFINE              : EQUAL;
 COLON               : ':';
 EQUAL               : '=';
 PLUS                : '+';
@@ -32,11 +32,11 @@ MINUS               : '-';
 ASTERISK            : '*';
 SLASH               : '/';
 
+
 NEWLINE                 : '\r' | '\n' | '\r\n';
-COMMENTKEY           : SLASH SLASH;
+COMMENTKEY : SEMICOLLON;
 
 IDENTIFIER : [A-Za-z0-9_]+;
-
 
 SEPARATOR           : (' ' | '\t')+ -> skip;
 

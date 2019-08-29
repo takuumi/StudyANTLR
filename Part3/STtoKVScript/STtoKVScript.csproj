@@ -30,11 +30,36 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Antlr4.Runtime.Standard">
+      <HintPath>..\..\packages\Antlr4.Runtime.Standard.4.7.2\lib\net35\Antlr4.Runtime.Standard.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="STGrammer.g4" />
+    <Compile Include="genKVScript\KVScriptGrammerParser.cs" />
+    <Compile Include="genKVScript\KVScriptGrammerVisitor.cs" />
+    <Compile Include="genKVScript\KVScriptGrammerLexer.cs" />
+    <Compile Include="genKVScript\KVScriptGrammerBaseVisitor.cs" />
+    <Compile Include="genST\STGrammerLexer.cs" />
+    <Compile Include="genST\STGrammerVisitor.cs" />
+    <Compile Include="genST\STGrammerBaseVisitor.cs" />
+    <Compile Include="genST\STGrammerParser.cs" />
+    <Compile Include="STtoKVScript.cs" />
+    <Compile Include="InterpreterImpl.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="genKVScript\KVScriptGrammerLexer.interp" />
+    <None Include="genKVScript\KVScriptGrammer.interp" />
+    <None Include="genKVScript\KVScriptGrammerLexer.tokens" />
+    <None Include="genKVScript\KVScriptGrammer.tokens" />
+    <None Include="genST\STGrammer.interp" />
+    <None Include="genST\STGrammerLexer.tokens" />
+    <None Include="genST\STGrammerLexer.interp" />
+    <None Include="genST\STGrammer.tokens" />
+    <None Include="packages.config" />
+    <None Include="STGrammer.g4" />
+    <None Include="KVScriptGrammer.g4" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

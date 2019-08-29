@@ -6,7 +6,8 @@ namespace STtoKVScript
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            string str = "//hogehoge \n //hugahuga";
+            Console.WriteLine(STtoKVScriptCore.Execute(str));
         }
     }
 }
