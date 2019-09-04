@@ -52,11 +52,12 @@ public interface ISTGrammerVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpr_stlinecomment([NotNull] STGrammerParser.Expr_stlinecommentContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="STGrammerParser.stlang"/>.
+	/// Visit a parse tree produced by the <c>expr_expr</c>
+	/// labeled alternative in <see cref="STGrammerParser.stlang"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitStlang([NotNull] STGrammerParser.StlangContext context);
+	Result VisitExpr_expr([NotNull] STGrammerParser.Expr_exprContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_define</c>
 	/// labeled alternative in <see cref="STGrammerParser.expr"/>.

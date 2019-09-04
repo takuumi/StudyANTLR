@@ -6,7 +6,7 @@ namespace STtoKVScript
     {
         public static void Main(string[] args)
         {
-            string str = "//hogehoge \n //hugahuga";
+            string str = "hoge := DM0 + 1";
             Console.WriteLine(STtoKVScriptCore.Execute(str));
         }
     }

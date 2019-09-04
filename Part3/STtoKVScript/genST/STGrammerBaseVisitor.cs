@@ -66,7 +66,8 @@ public partial class STGrammerBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// <return>The visitor result.</return>
 	public virtual Result VisitExpr_stlinecomment([NotNull] STGrammerParser.Expr_stlinecommentContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="STGrammerParser.stlang"/>.
+	/// Visit a parse tree produced by the <c>expr_expr</c>
+	/// labeled alternative in <see cref="STGrammerParser.stlang"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -74,7 +75,7 @@ public partial class STGrammerBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitStlang([NotNull] STGrammerParser.StlangContext context) { return VisitChildren(context); }
+	public virtual Result VisitExpr_expr([NotNull] STGrammerParser.Expr_exprContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_define</c>
 	/// labeled alternative in <see cref="STGrammerParser.expr"/>.

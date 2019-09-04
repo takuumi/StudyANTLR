@@ -10,55 +10,70 @@ oneline
     ;
 
 stlang
-    : IDENTIFIER DEFINE expr;
+    : IDENTIFIER ASSIGN expr SEMI_COLON            #expr_expr
+    ;
 
 expr
     : define                             #expr_define
-    | lhs=expr (PLUS|MINUS) rhs=expr     #expr_additive
+    | lhs=expr op=(PLUS|MINUS) rhs=expr     #expr_additive
     ;
 
 define
     : IDENTIFIER;
 
 linecomment
-    : COMMENTKEY (~NEWLINE)*;
+    : SINGLE_LINE_COMMENT;
     
 
-DEFINE              : COLON EQUAL;
-COLON               : ':';
-EQUAL               : '=';
-PLUS                : '+';
-MINUS               : '-';
-ASTERISK            : '*';
-SLASH               : '/';
-
 NEWLINE                 : '\r' | '\n' | '\r\n';
-COMMENTKEY           : SLASH SLASH;
 
+
+PLUS : '+';
+MINUS : '-';
+ASTERISK : '*';
+SLASH : '/';
+POW: '**';
+LT: '<';
+GT: '>';
+LE: '<=';
+GE: '>=';
+EQ: '=';
+NEQ: '<>';
+ASSIGN: ':=';
+OUTREF: '=>';
+RANGE: '..';
+COMMA: ',';
+OPEN_PAREN : '(';
+CLOSE_PAREN : ')';
+SEMI_COLON: ';';
+
+CASE: C A S E;
+OF: O F;
+END_CASE: E N D '_' C A S E;
+REPEAT: R E P E A T;
+UNTIL: U N T I L;
+END_REPEAT: E N D '_' R E P E A T;
+
+/*
+ID_START: [A-Za-z_];
+ID_CONTINUE: ID_START | [0-9];
+IDENTIFIER: ID_START ID_CONTINUE*;
+*/
 IDENTIFIER : [A-Za-z0-9_]+;
 
+WS: [ \t]+ -> skip;
+//EOL: '\r'? '\n' | '\r' -> skip;
+SINGLE_LINE_COMMENT: '//' ~[\r\n]*;
 
-SEPARATOR           : (' ' | '\t')+ -> skip;
+fragment INT: I N T;
+fragment DINT: D INT;
+fragment UINT: U INT;
+fragment UDINT: U DINT;
+fragment REAL: R E A L;
+fragment LREAL: L REAL;
+fragment STRING: S T R I N G;
+fragment WSTRING: W STRING;
 
-
-fragment FLOAT : SIGN? (REAL | EXP) ;
-fragment REAL : DEC_DIGIT* DOT DEC_DIGIT*;
-fragment EXP : REAL E SIGN? DEC_DIGIT+;
-fragment SIGN : [+-];
-
-fragment DECIMAL_HEAD   : K | SHARP;                    // 10進即値の頭文字
-fragment HEX_HEAD       : H | DOLLAR;                   // 16進即値の頭文字
-fragment DEC_DIGIT      : [0-9];
-fragment HEX_DIGIT      : [0-9A-F];
-fragment ESC_QUOTE      : DOUBLEQUATE DOUBLEQUATE;
-fragment DOLLAR         : '$';
-fragment SINGLE_QUOTE   : '\'';
-fragment SHARP          : '#';
-fragment SEMICOLLON     : ';';
-fragment DOUBLEQUATE    : '"';
-fragment DOT            : '.';
-
-fragment ALPHABETS      : [a-zA-Z];
 fragment A: [Aa];
 fragment B: [Bb];
 fragment C: [Cc];
