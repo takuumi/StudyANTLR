@@ -1,31 +1,35 @@
 grammar STGrammer;
 
 input
-    : (oneline? NEWLINE)* oneline? EOF
+    : block*? EOF
     ;
 
-oneline
-    : stlang                            #expr_stlang
+block
+    : statement                         #expr_stlang
     | linecomment                       #expr_stlinecomment
     ;
 
-stlang
+statement
     : IDENTIFIER ASSIGN expr SEMI_COLON            #expr_expr
     ;
 
 expr
-    : define                             #expr_define
+    : define                                #expr_define
     | lhs=expr op=(PLUS|MINUS) rhs=expr     #expr_additive
+    | MULTISTRING expr MULTISTRING          #expr_multistring
+    | WIDESTRING expr WIDESTRING            #expr_widestring
     ;
 
 define
-    : IDENTIFIER;
+    : IDENTIFIER
+    | NUM_UINT
+    | NUM_REAL
+    ;
 
 linecomment
     : SINGLE_LINE_COMMENT;
     
 
-NEWLINE                 : '\r' | '\n' | '\r\n';
 
 
 PLUS : '+';
@@ -54,16 +58,31 @@ REPEAT: R E P E A T;
 UNTIL: U N T I L;
 END_REPEAT: E N D '_' R E P E A T;
 
-/*
-ID_START: [A-Za-z_];
-ID_CONTINUE: ID_START | [0-9];
-IDENTIFIER: ID_START ID_CONTINUE*;
-*/
-IDENTIFIER : [A-Za-z0-9_]+;
+MULTISTRING : SINGLEQUATE;
+WIDESTRING :  DOUBLEQUATE;
+
 
 WS: [ \t]+ -> skip;
 //EOL: '\r'? '\n' | '\r' -> skip;
 SINGLE_LINE_COMMENT: '//' ~[\r\n]*;
+NEWLINE                 : '\r' | '\n' | '\r\n';
+
+
+NUM_UINT: [0-9]+;
+NUM_REAL : DEC_DIGIT* DOT DEC_DIGIT*;
+
+
+
+fragment ID_START: [A-Za-z_];
+fragment ID_CONTINUE: ID_START | [0-9];
+IDENTIFIER: ID_START ID_CONTINUE*;
+
+
+fragment DOUBLEQUATE    : '"';
+fragment SINGLEQUATE    : ['];
+
+fragment DEC_DIGIT      : [0-9];
+fragment DOT            : '.';
 
 fragment INT: I N T;
 fragment DINT: D INT;
