@@ -5,29 +5,50 @@ input
     ;
 
 block
-    : statement NEWLINE*                        #expr_stlang
-    | linecomment NEWLINE*                       #expr_stlinecomment
+    : statement_repeat                     #st_state_repeat
+    | statement_return                     #st_state_return
+    | statement_case                       #st_state_case
+    | expr SEMI_COLON                      #st_expression
+    | linecomment                          #st_linecomment
     ;
 
-statement
-    : expr SEMI_COLON                               #expr_void
+/* REPEAT */
+statement_repeat
+    : REPEAT block* UNTIL expr END_REPEAT SEMI_COLON   #expt_stblock_repeat
     ;
 
+/* RETURN */
+statement_return
+    : RETURN SEMI_COLON
+    ;
+
+/* CASE */
+statement_case
+    : CASE expr OF (case_of_state+ COLON block*)* (ELSE block*)? END_CASE SEMI_COLON
+    ;
+
+case_of_state
+    : IDENTIFIER
+    | COMMA IDENTIFIER
+    | '..' IDENTIFIER
+    ;
+
+/* Expression */
 expr
-    : op=(PLUS|MINUS|NOT) expr                      #expr_unary
-    | lhs=expr op=(PLUS|MINUS) rhs=expr         #expr_additive
-    | lhs=expr op=(ASTERISK | SLASH | POW | MOD) rhs=expr   #expr_multipricative
-    | lhs=expr op=(AND|AND2|OR|XOR) rhs=expr               #expr_logical_operation
-    | lhs=expr op=(GT|LT|GE|LE) rhs=expr               #expr_comparison_operation
-    | lhs=expr op=(EQ|NEQ) rhs=expr               #expr_equivalent_operation
-    | expr ASSIGN expr                #expr_assign
-    | expr OUTREF expr                #expr_outref
-    | funcname=IDENTIFIER OPEN_PAREN args+=expr* (COMMA expr)*  CLOSE_PAREN #expr_funccall   //+=を使うと、同じ種類の構文要素リスト化できる
-    | MULTISTRING expr MULTISTRING          #expr_multistring
-    | WIDESTRING expr WIDESTRING            #expr_widestring
-    | type_define                           #expr_typedefine
-    | disp_define                           #expr_dispdefine
-    | define                                #expr_define
+    : op=(PLUS|MINUS|NOT) expr                              #expr_unary
+    | lhs=expr op=(PLUS|MINUS) rhs=expr                     #expr_additive
+    | lhs=expr op=(ASTERISK|SLASH|POW|MOD) rhs=expr         #expr_multipricative
+    | lhs=expr op=(AND|AND2|OR|XOR) rhs=expr                #expr_logical_operation
+    | lhs=expr op=(GT|LT|GE|LE) rhs=expr                    #expr_comparison_operation
+    | lhs=expr op=(EQ|NEQ) rhs=expr                         #expr_equivalent_operation
+    | lhs=expr ASSIGN rhs=expr                              #expr_assign
+    | expr OUTREF expr                                      #expr_outref
+    | funcname=IDENTIFIER OPEN_PAREN args+=expr* (COMMA expr)*  CLOSE_PAREN #expr_funccall
+    | MULTISTRING expr MULTISTRING                          #expr_multistring
+    | WIDESTRING expr WIDESTRING                            #expr_widestring
+    | type_define                                           #expr_typedefine
+    | disp_define                                           #expr_dispdefine
+    | define                                                #expr_define
     ;
 
 define
@@ -36,26 +57,23 @@ define
     | NUM_REAL
     ;
 
-// todo conbine
+// todo cast? INT#2#0011 って一体・・・
 type_define
     : TYPE_INT NUM_UINT
     | TYPE_UINT NUM_UINT
     | TYPE_LREAL NUM_REAL
     | TYPE_STRING MULTISTRING IDENTIFIER MULTISTRING
+    | TYPE_INT disp_define
     | TYPE_UINT disp_define
     ;
 
-
 disp_define
     : DISP_BIN
-    | DISP_DEC
+    | DISP_OCT
     | DISP_HEX;
-
 
 linecomment
     : SINGLE_LINE_COMMENT;
-    
-
 
 
 PLUS : '+';
@@ -76,6 +94,7 @@ COMMA: ',';
 OPEN_PAREN : '(';
 CLOSE_PAREN : ')';
 SEMI_COLON: ';';
+COLON : ':';
 
 NOT : N O T;
 MOD : M O D;
@@ -89,45 +108,42 @@ OF: O F;
 END_CASE: E N D '_' C A S E;
 REPEAT: R E P E A T;
 UNTIL: U N T I L;
+ELSE : E L S E;
+RETURN: R E T U R N;
 END_REPEAT: E N D '_' R E P E A T;
 
 MULTISTRING : SINGLEQUATE;
 WIDESTRING :  DOUBLEQUATE;
 
-
-WS: [ \t]+ -> skip;
-//EOL: '\r'? '\n' | '\r' -> skip;
+WS                  : (' ' | '\t' | '\n' | '\r' | '\r\n')+ -> skip;
 SINGLE_LINE_COMMENT: '//' ~[\r\n]*;
-NEWLINE                 : '\r' | '\n' | '\r\n';
-
 
 NUM_UINT: [0-9]+;
 NUM_REAL : DEC_DIGIT* DOT DEC_DIGIT*;
-fragment NUM_HEX : [0-9A-F]+;
-fragment BIN: [01]+ UNDERLINE* [01]+;
 
-fragment TYPE_KEY    : '#';
-TYPE_INT : INT TYPE_KEY;
-TYPE_UINT : UINT TYPE_KEY;
-TYPE_LREAL : LREAL TYPE_KEY;
-TYPE_STRING : STRING TYPE_KEY;
+TYPE_INT : INT SHARP;
+TYPE_UINT : UINT SHARP;
+TYPE_LREAL : LREAL SHARP;
+TYPE_STRING : STRING SHARP;
 
-DISP_BIN    : '2' TYPE_KEY BIN;
-DISP_DEC    : '10' TYPE_KEY NUM_UINT;
-DISP_HEX    : '16' TYPE_KEY NUM_HEX;
+DISP_BIN    : '2' SHARP BIN;
+DISP_OCT    : '8' SHARP NUM_UINT;
+DISP_HEX    : '16' SHARP NUM_HEX;
 
+IDENTIFIER: ID_START ID_CONTINUE*;
 
 fragment ID_START: [A-Za-z_];
 fragment ID_CONTINUE: ID_START | [0-9];
-IDENTIFIER: ID_START ID_CONTINUE*;
-
 
 fragment DOUBLEQUATE    : '"';
 fragment SINGLEQUATE    : ['];
 fragment UNDERLINE      : '_';
 
-fragment DEC_DIGIT      : [0-9];
 fragment DOT            : '.';
+fragment DEC_DIGIT      : [0-9];
+fragment NUM_HEX : [0-9A-F]+;
+fragment BIN: [01]+ UNDERLINE* [01]+;
+fragment SHARP    : '#';
 
 fragment INT: I N T;
 fragment DINT: D INT;
