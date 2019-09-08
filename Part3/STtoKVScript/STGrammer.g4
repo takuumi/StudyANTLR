@@ -1,23 +1,33 @@
 grammar STGrammer;
 
 input
-    : block*? EOF
+    : block* EOF
     ;
 
 block
-    : statement                         #expr_stlang
-    | linecomment                       #expr_stlinecomment
+    : statement NEWLINE*                        #expr_stlang
+    | linecomment NEWLINE*                       #expr_stlinecomment
     ;
 
 statement
-    : IDENTIFIER ASSIGN expr SEMI_COLON            #expr_expr
+    : expr SEMI_COLON                               #expr_void
     ;
 
 expr
-    : define                                #expr_define
-    | lhs=expr op=(PLUS|MINUS) rhs=expr     #expr_additive
+    : op=(PLUS|MINUS|NOT) expr                      #expr_unary
+    | lhs=expr op=(PLUS|MINUS) rhs=expr         #expr_additive
+    | lhs=expr op=(ASTERISK | SLASH | POW | MOD) rhs=expr   #expr_multipricative
+    | lhs=expr op=(AND|AND2|OR|XOR) rhs=expr               #expr_logical_operation
+    | lhs=expr op=(GT|LT|GE|LE) rhs=expr               #expr_comparison_operation
+    | lhs=expr op=(EQ|NEQ) rhs=expr               #expr_equivalent_operation
+    | expr ASSIGN expr                #expr_assign
+    | expr OUTREF expr                #expr_outref
+    | funcname=IDENTIFIER OPEN_PAREN args+=expr* (COMMA expr)*  CLOSE_PAREN #expr_funccall   //+=を使うと、同じ種類の構文要素リスト化できる
     | MULTISTRING expr MULTISTRING          #expr_multistring
     | WIDESTRING expr WIDESTRING            #expr_widestring
+    | type_define                           #expr_typedefine
+    | disp_define                           #expr_dispdefine
+    | define                                #expr_define
     ;
 
 define
@@ -25,6 +35,22 @@ define
     | NUM_UINT
     | NUM_REAL
     ;
+
+// todo conbine
+type_define
+    : TYPE_INT NUM_UINT
+    | TYPE_UINT NUM_UINT
+    | TYPE_LREAL NUM_REAL
+    | TYPE_STRING MULTISTRING IDENTIFIER MULTISTRING
+    | TYPE_UINT disp_define
+    ;
+
+
+disp_define
+    : DISP_BIN
+    | DISP_DEC
+    | DISP_HEX;
+
 
 linecomment
     : SINGLE_LINE_COMMENT;
@@ -51,6 +77,13 @@ OPEN_PAREN : '(';
 CLOSE_PAREN : ')';
 SEMI_COLON: ';';
 
+NOT : N O T;
+MOD : M O D;
+AND : A N D;
+OR : O R;
+XOR : X O R;
+AND2 : '&';
+
 CASE: C A S E;
 OF: O F;
 END_CASE: E N D '_' C A S E;
@@ -70,7 +103,18 @@ NEWLINE                 : '\r' | '\n' | '\r\n';
 
 NUM_UINT: [0-9]+;
 NUM_REAL : DEC_DIGIT* DOT DEC_DIGIT*;
+fragment NUM_HEX : [0-9A-F]+;
+fragment BIN: [01]+ UNDERLINE* [01]+;
 
+fragment TYPE_KEY    : '#';
+TYPE_INT : INT TYPE_KEY;
+TYPE_UINT : UINT TYPE_KEY;
+TYPE_LREAL : LREAL TYPE_KEY;
+TYPE_STRING : STRING TYPE_KEY;
+
+DISP_BIN    : '2' TYPE_KEY BIN;
+DISP_DEC    : '10' TYPE_KEY NUM_UINT;
+DISP_HEX    : '16' TYPE_KEY NUM_HEX;
 
 
 fragment ID_START: [A-Za-z_];
@@ -80,6 +124,7 @@ IDENTIFIER: ID_START ID_CONTINUE*;
 
 fragment DOUBLEQUATE    : '"';
 fragment SINGLEQUATE    : ['];
+fragment UNDERLINE      : '_';
 
 fragment DEC_DIGIT      : [0-9];
 fragment DOT            : '.';
