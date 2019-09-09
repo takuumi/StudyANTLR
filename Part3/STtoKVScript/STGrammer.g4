@@ -48,12 +48,15 @@ expr
     | WIDESTRING expr WIDESTRING                            #expr_widestring
     | type_define                                           #expr_typedefine
     | disp_define                                           #expr_dispdefine
-    | define                                                #expr_define
+    | normal_value                                          #expr_normal_value
+    | variable                                              #expr_variable
     ;
 
-define
-    : IDENTIFIER
-    | NUM_UINT
+variable
+    : IDENTIFIER;
+
+normal_value
+    : NUM_UINT
     | NUM_REAL
     ;
 
