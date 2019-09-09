@@ -69,7 +69,19 @@ namespace STtoKVScript
         public override Result VisitSt_linecomment([NotNull] STGrammerParser.St_linecommentContext context)
         {
             // 適当実装
-            return new Result(true, context.GetText().Replace("//", ";"));
+            return new Result(true, context.GetText().Replace("//", "'"));
+        }
+
+        public override Result VisitExpr_multistring([NotNull] STGrammerParser.Expr_multistringContext context)
+        {
+            string str = Visit(context.expr()).Info as string;
+            return new Result(true, "\"" + str + "\"");
+        }
+
+        public override Result VisitExpr_widestring([NotNull] STGrammerParser.Expr_widestringContext context)
+        {
+            string str = Visit(context.expr()).Info as string;
+            return new Result(true, "\"" + str + "\"");
         }
 
         // 結果クラス
