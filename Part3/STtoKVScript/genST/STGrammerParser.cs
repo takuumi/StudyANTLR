@@ -673,6 +673,7 @@ public partial class STGrammerParser : Parser {
 		public IToken funcname;
 		public ExprContext _expr;
 		public IList<ExprContext> _args = new List<ExprContext>();
+		public IList<ExprContext> _args2 = new List<ExprContext>();
 		public ITerminalNode OPEN_PAREN() { return GetToken(STGrammerParser.OPEN_PAREN, 0); }
 		public ITerminalNode CLOSE_PAREN() { return GetToken(STGrammerParser.CLOSE_PAREN, 0); }
 		public ITerminalNode IDENTIFIER() { return GetToken(STGrammerParser.IDENTIFIER, 0); }
@@ -919,7 +920,8 @@ public partial class STGrammerParser : Parser {
 					{
 					{
 					State = 106; Match(COMMA);
-					State = 107; expr(0);
+					State = 107; ((Expr_funccallContext)_localctx)._expr = expr(0);
+					((Expr_funccallContext)_localctx)._args2.Add(((Expr_funccallContext)_localctx)._expr);
 					}
 					}
 					State = 112;

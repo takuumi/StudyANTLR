@@ -43,7 +43,7 @@ expr
     | lhs=expr op=(EQ|NEQ) rhs=expr                         #expr_equivalent_operation
     | lhs=expr ASSIGN rhs=expr                              #expr_assign
     | expr OUTREF expr                                      #expr_outref
-    | funcname=IDENTIFIER OPEN_PAREN args+=expr* (COMMA expr)*  CLOSE_PAREN #expr_funccall
+    | funcname=IDENTIFIER OPEN_PAREN args+=expr* (COMMA args2+=expr)*  CLOSE_PAREN #expr_funccall
     | MULTISTRING expr MULTISTRING                          #expr_multistring
     | WIDESTRING expr WIDESTRING                            #expr_widestring
     | type_define                                           #expr_typedefine
@@ -74,6 +74,9 @@ disp_define
     : DISP_BIN
     | DISP_OCT
     | DISP_HEX;
+
+
+
 
 linecomment
     : SINGLE_LINE_COMMENT;
