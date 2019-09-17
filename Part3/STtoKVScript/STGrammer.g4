@@ -35,7 +35,8 @@ case_of_state
 
 /* Expression */
 expr
-    : op=(PLUS|MINUS|NOT) expr                              #expr_unary
+    : op=(PLUS|MINUS) expr                              #expr_unary
+    | NOT func_expr                                         #expr_not
     | lhs=expr op=(PLUS|MINUS) rhs=expr                     #expr_additive
     | lhs=expr op=(ASTERISK|SLASH|POW|MOD) rhs=expr         #expr_multipricative
     | lhs=expr op=(AND|AND2|OR|XOR) rhs=expr                #expr_logical_operation

@@ -295,6 +295,17 @@ public partial class STGrammerBaseVisitor<Result> : AbstractParseTreeVisitor<Res
 	/// <return>The visitor result.</return>
 	public virtual Result VisitExpr_unary([NotNull] STGrammerParser.Expr_unaryContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_not</c>
+	/// labeled alternative in <see cref="STGrammerParser.expr"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExpr_not([NotNull] STGrammerParser.Expr_notContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_dispdefine</c>
 	/// labeled alternative in <see cref="STGrammerParser.expr"/>.
 	/// <para>

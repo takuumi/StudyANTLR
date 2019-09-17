@@ -197,6 +197,13 @@ public interface ISTGrammerVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpr_unary([NotNull] STGrammerParser.Expr_unaryContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_not</c>
+	/// labeled alternative in <see cref="STGrammerParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpr_not([NotNull] STGrammerParser.Expr_notContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_dispdefine</c>
 	/// labeled alternative in <see cref="STGrammerParser.expr"/>.
 	/// </summary>

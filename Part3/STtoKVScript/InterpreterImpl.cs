@@ -130,7 +130,6 @@ namespace STtoKVScript
             {
                 case STGrammerParser.PLUS: return new Result(true, "+" + str);
                 case STGrammerParser.MINUS: return new Result(true, "-" + str);
-                case STGrammerParser.NOT: return new Result(true, "NOT(" + str + ")");
                 default: return DefaultResult;
             }
         }
@@ -354,11 +353,17 @@ namespace STtoKVScript
             }
         }
 
+        public override Result VisitExpr_not([NotNull] STGrammerParser.Expr_notContext context)
+        {
+            string str = Visit(context.func_expr()).Info as string;
+            return new Result(true, "NOT(" + str + ")");
+        }
 
         public override Result VisitFunc_variable([NotNull] STGrammerParser.Func_variableContext context)
         {
             return new Result(true, context.GetText());
         }
+
 
         // 結果クラス
         public class Result
