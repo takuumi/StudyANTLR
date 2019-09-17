@@ -52,8 +52,8 @@ namespace STtoKVScript
         {
             switch (context.Start.Type)
             {
-                case STGrammerParser.NUM_UINT : return new Result(true, "#" + int.Parse(context.Start.Text).ToString());
-                case STGrammerParser.NUM_REAL : return new Result(true, "#" + float.Parse(context.Start.Text).ToString(".0"));
+                case STGrammerParser.NUM_UINT: return new Result(true, "#" + int.Parse(context.Start.Text).ToString());
+                case STGrammerParser.NUM_REAL: return new Result(true, "#" + float.Parse(context.Start.Text).ToString(".0"));
                 default: return DefaultResult;
             }
         }
@@ -88,7 +88,7 @@ namespace STtoKVScript
                     }
                     string strInt = Visit(context.disp_define()).Info as string;
                     return new Result(true, "TOS(" + strInt + ")");
-                case STGrammerParser.TYPE_UINT :
+                case STGrammerParser.TYPE_UINT:
 
                     if (context.NUM_UINT() != null)
                     {
@@ -98,8 +98,8 @@ namespace STtoKVScript
                     return new Result(true, "TOU(" + strUint + ")");
 
 
-                case STGrammerParser.TYPE_LREAL : return new Result(true, "TODF(#" + context.NUM_REAL().ToString() + ")");
-                case STGrammerParser.TYPE_STRING : return new Result(true, "\"" + context.IDENTIFIER().ToString() + "\"");
+                case STGrammerParser.TYPE_LREAL: return new Result(true, "TODF(#" + context.NUM_REAL().ToString() + ")");
+                case STGrammerParser.TYPE_STRING: return new Result(true, "\"" + context.IDENTIFIER().ToString() + "\"");
 
                 default: return DefaultResult;
             }
@@ -109,15 +109,15 @@ namespace STtoKVScript
         {
             string strNum = context.GetText();
             int pos = strNum.IndexOf("#");
-            string strValue = strNum.Substring(pos+1, strNum.Length-pos-1);
+            string strValue = strNum.Substring(pos + 1, strNum.Length - pos - 1);
 
             switch (context.Start.Type)
             {
-                case STGrammerParser.DISP_BIN :
+                case STGrammerParser.DISP_BIN:
                     return new Result(true, "$" + Convert.ToString(Convert.ToInt32(strValue.Replace("_", ""), 2), 16));
-                case STGrammerParser.DISP_OCT :
+                case STGrammerParser.DISP_OCT:
                     return new Result(true, "#" + Convert.ToString(Convert.ToInt32(strValue.Replace("_", ""), 8), 10));
-                case STGrammerParser.DISP_HEX : return new Result(true, "$" + strValue);
+                case STGrammerParser.DISP_HEX: return new Result(true, "$" + strValue);
                 default: return DefaultResult;
             }
         }
@@ -166,7 +166,7 @@ namespace STtoKVScript
 
             switch (context.op.Type)
             {
-                case STGrammerParser.AND : return new Result(true, strLhs + " AND " + strRhs);
+                case STGrammerParser.AND: return new Result(true, strLhs + " AND " + strRhs);
                 case STGrammerParser.AND2: return new Result(true, strLhs + " AND " + strRhs);
                 case STGrammerParser.OR: return new Result(true, strLhs + " OR " + strRhs);
                 case STGrammerParser.XOR: return new Result(true, strLhs + " XOR " + strRhs);
@@ -228,7 +228,136 @@ namespace STtoKVScript
             strFunc += ")";
 
             return new Result(true, strFunc);
-            
+
+        }
+
+        public override Result VisitStatement_return([NotNull] STGrammerParser.Statement_returnContext context)
+        {
+            return new Result(true, "IF FALSE THEN");
+        }
+
+
+        public override Result VisitExpt_stblock_repeat([NotNull] STGrammerParser.Expt_stblock_repeatContext context)
+        {
+            string strRepeat = "DO\n";
+
+            foreach (var e in context._blks)
+            {
+                string str = Visit(e).Info as string;
+                strRepeat += str;
+                strRepeat += "\n";
+            }
+            strRepeat += "UNTIL ";
+            strRepeat += Visit(context.expr()).Info as string;
+
+            return new Result(true, strRepeat);
+        }
+
+        public override Result VisitExpr_keyword([NotNull] STGrammerParser.Expr_keywordContext context)
+        {
+            switch (context.Start.Type)
+            {
+                case STGrammerParser.EXIT: return new Result(true, "BREAK");
+                default: return DefaultResult;
+
+            }
+        }
+
+        public override Result VisitSt_case_detail([NotNull] STGrammerParser.St_case_detailContext context)
+        {
+            string strCase = "SELECT CASE ";
+            strCase += Visit(context.expr()).Info as string;
+
+            if (context.OF() != null)
+            {
+                strCase += "\nCASE ";
+                foreach (var e in context._caseState)
+                {
+                    string str = Visit(e).Info as string;
+                    strCase += str;
+                }
+                strCase += "\n";
+
+                foreach (var e in context._blks)
+                {
+                    string str = Visit(e).Info as string;
+                    strCase += str;
+                    strCase += "\n";
+                }
+            }
+
+            if (context.ELSE() != null)
+            {
+                strCase += "CASE ELSE\n";
+                foreach (var e in context._else_blks)
+                {
+                    string str = Visit(e).Info as string;
+                    strCase += str;
+                    strCase += "\n";
+                }
+            }
+
+            strCase += "END SELECT";
+            return new Result(true, strCase);
+        }
+
+        public override Result VisitCase_of_state([NotNull] STGrammerParser.Case_of_stateContext context)
+        {
+            string strCase = "";
+            if (context.COMMA() != null)
+            {
+                strCase += ",";
+
+            }
+
+            if (context.RANGE() != null)
+            {
+                strCase += "TO ";
+            }
+
+            strCase += context.IDENTIFIER().GetText();
+
+            return new Result(true, strCase);
+        }
+
+        public override Result VisitFunc_named_arg([NotNull] STGrammerParser.Func_named_argContext context)
+        {
+            string strLhs = Visit(context.lhs).Info as string;
+            string strRhs = Visit(context.rhs).Info as string;
+
+            switch (context.op.Type)
+            {
+                case STGrammerParser.ASSIGN: return new Result(true, strLhs + ":=" + strRhs);
+                case STGrammerParser.OUTREF: return new Result(true, strLhs + "=>" + strRhs);
+                default: return DefaultResult;
+            }
+        }
+
+        public override Result VisitFunc_operation([NotNull] STGrammerParser.Func_operationContext context)
+        {
+            string strLhs = Visit(context.lhs).Info as string;
+            string strRhs = Visit(context.rhs).Info as string;
+
+            switch (context.op.Type)
+            {
+                case STGrammerParser.AND: return new Result(true, strLhs + " AND " + strRhs);
+                case STGrammerParser.AND2: return new Result(true, strLhs + " AND " + strRhs);
+                case STGrammerParser.OR: return new Result(true, strLhs + " OR " + strRhs);
+                case STGrammerParser.XOR: return new Result(true, strLhs + " XOR " + strRhs);
+                case STGrammerParser.GT: return new Result(true, strLhs + ">" + strRhs);
+                case STGrammerParser.GE: return new Result(true, strLhs + ">=" + strRhs);
+                case STGrammerParser.LT: return new Result(true, strLhs + "<" + strRhs);
+                case STGrammerParser.LE: return new Result(true, strLhs + "<=" + strRhs);
+                case STGrammerParser.EQ: return new Result(true, strLhs + "=" + strRhs);
+                case STGrammerParser.NEQ: return new Result(true, strLhs + "<>" + strRhs);
+                default: return DefaultResult;
+            }
+        }
+
+
+        public override Result VisitFunc_variable([NotNull] STGrammerParser.Func_variableContext context)
+        {
+            return new Result(true, context.GetText());
         }
 
         // 結果クラス

@@ -178,7 +178,7 @@ namespace TestSTtoKVScript
             string expect2 = "A=FUNC(B)\n";
             string expect3 = "A=FUNC(B AND C,D=E)\n";
             string expect4 = "A=FUNC(B:=C)\n";
-            string expect5 = "A=FUNC(B,C:=D)";
+            string expect5 = "A=FUNC(B,C=>D)\n";
 
             var result1 = STtoKVScriptCore.Execute(input1);
 
@@ -197,5 +197,92 @@ namespace TestSTtoKVScript
             Assert.AreEqual(expect5, result5);
 
         }
+
+        [TestCase()]
+        public void TestCaseS1()
+        {
+            string input1 = "A:= B;\n A:= B; C:= D;";
+            string expect1 = "A=B\nA=B\nC=D\n";
+            
+            var result1 = STtoKVScriptCore.Execute(input1);
+
+            Console.WriteLine(result1);
+
+            Assert.AreEqual(expect1, result1);
+        }
+
+        [TestCase()]
+        public void TestCaseS2()
+        {
+            string input1 = "REPEAT\n  REPEAT\n EXIT;\n UNTIL A END_REPEAT;\n UNTIL B END_REPEAT;\n";
+
+            string expect1 = "DO\nDO\nBREAK\nUNTIL A\nUNTIL B\n";
+
+            var result1 = STtoKVScriptCore.Execute(input1);
+
+            Console.WriteLine(result1);
+
+            Assert.AreEqual(expect1, result1);
+        }
+
+        [TestCase()]
+        public void TestCaseS3_1()
+        {
+            string input1 = "CASE A OF  \n B: C:= D; \n ELSE E:= F; \n END_CASE;";
+            string expect1 = "SELECT CASE A\nCASE B\nC=D\nCASE ELSE\nE=F\nEND SELECT\n";
+    
+            var result1 = STtoKVScriptCore.Execute(input1);
+
+            Console.WriteLine(result1);
+
+            Assert.AreEqual(expect1, result1);
+        }
+
+        [TestCase()]
+        public void TestCaseS3_2()
+        {
+            string input1 = "CASE A OF \n B:\n C: D:= E; \n END_CASE; \n CASE A OF \n B, C: \n D..E: \n F,G,H..I:J:= K;\nEND_CASE;";
+
+            string expect1 = "SELECT CASE A\nCASE B,C\nD=E\nEND SELECT\nSELECT CASE A\nCASE B,C,D TO E,F,G,H TO I\nJ=K\nEND SELECT";
+
+            var result1 = STtoKVScriptCore.Execute(input1);
+
+            Console.WriteLine(result1);
+
+            Assert.AreEqual(expect1, result1);
+        }
+
+        [TestCase()]
+        public void TestCaseS3_3()
+        {
+            string input1 = "CASE A OF B:C:= D; ELSE F(); END_CASE;";
+
+            string expect1 = "SELECT CASE A\nCASE B\nC=D\nCASE ELSE\nF()\nEND SELECT\n";
+
+            var result1 = STtoKVScriptCore.Execute(input1);
+
+            Console.WriteLine(result1);
+
+            Assert.AreEqual(expect1, result1);
+        }
+
+
+
+        [TestCase()]
+        public void TestCaseS4()
+        {
+            string input1 = "RETURN;\n CASE A OF \n B: C:= E; \n ELSE RETURN; \n END_CASE;\n";
+
+            string expect1 = "IF FALSE THEN\nSELECT CASE A\nCASE B\nC=E\nCASE ELSE\nR0=R0\nEND SELECT\nEND IF\n";
+
+            var result1 = STtoKVScriptCore.Execute(input1);
+
+            Console.WriteLine(result1);
+
+            Assert.AreEqual(expect1, result1);
+        }
+
     }
 }
+
+

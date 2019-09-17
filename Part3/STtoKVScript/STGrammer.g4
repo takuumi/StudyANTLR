@@ -14,7 +14,7 @@ block
 
 /* REPEAT */
 statement_repeat
-    : REPEAT block* UNTIL expr END_REPEAT SEMI_COLON   #expt_stblock_repeat
+    : REPEAT blks +=block* UNTIL expr END_REPEAT SEMI_COLON   #expt_stblock_repeat
     ;
 
 /* RETURN */
@@ -24,13 +24,13 @@ statement_return
 
 /* CASE */
 statement_case
-    : CASE expr OF (case_of_state+ COLON block*)* (ELSE block*)? END_CASE SEMI_COLON
+    : CASE expr OF (caseState+=case_of_state+ COLON blks+=block*)* (ELSE else_blks+=block*)? END_CASE SEMI_COLON #st_case_detail
     ;
 
 case_of_state
     : IDENTIFIER
     | COMMA IDENTIFIER
-    | '..' IDENTIFIER
+    | RANGE IDENTIFIER
     ;
 
 /* Expression */
@@ -43,17 +43,29 @@ expr
     | lhs=expr op=(EQ|NEQ) rhs=expr                         #expr_equivalent_operation
     | lhs=expr ASSIGN rhs=expr                              #expr_assign
     | expr OUTREF expr                                      #expr_outref
-    | funcname=IDENTIFIER OPEN_PAREN args+=expr* (COMMA args2+=expr)*  CLOSE_PAREN #expr_funccall
+    | funcname=IDENTIFIER OPEN_PAREN args+=func_expr* (COMMA args2+=func_expr)*  CLOSE_PAREN #expr_funccall
     | MULTISTRING expr MULTISTRING                          #expr_multistring
     | WIDESTRING expr WIDESTRING                            #expr_widestring
+    //todo
+    | keyword                                               #expr_keyword
     | type_define                                           #expr_typedefine
     | disp_define                                           #expr_dispdefine
     | normal_value                                          #expr_normal_value
     | variable                                              #expr_variable
     ;
 
+func_expr
+    : lhs=expr op=(ASSIGN|OUTREF) rhs=expr                         #func_named_arg
+    | lhs=expr op=(AND|AND2|OR|XOR|GT|LT|GE|LE|EQ|NEQ) rhs=expr    #func_operation
+    | variable                                                     #func_variable
+    ;
+
+
 variable
     : IDENTIFIER;
+
+keyword
+    : EXIT;
 
 normal_value
     : NUM_UINT
@@ -117,6 +129,7 @@ UNTIL: U N T I L;
 ELSE : E L S E;
 RETURN: R E T U R N;
 END_REPEAT: E N D '_' R E P E A T;
+EXIT: E X I T;
 
 MULTISTRING : SINGLEQUATE;
 WIDESTRING :  DOUBLEQUATE;

@@ -6,8 +6,7 @@ namespace STtoKVScript
     {
         public static void Main(string[] args)
         {
-            string str = "A := UINT#2#1100_0011;";
-//            string str = "hoge := DM0 + 1";
+            string str = "CASE A OF \n B:\n C: D:= E; \n END_CASE; \n CASE A OF \n B, C: \n D..E: \n F,G,H..I:J:= K;\nEND_CASE;";
             Console.WriteLine(STtoKVScriptCore.Execute(str));
         }
     }

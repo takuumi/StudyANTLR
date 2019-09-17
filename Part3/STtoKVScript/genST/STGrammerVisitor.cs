@@ -86,11 +86,12 @@ public interface ISTGrammerVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStatement_return([NotNull] STGrammerParser.Statement_returnContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="STGrammerParser.statement_case"/>.
+	/// Visit a parse tree produced by the <c>st_case_detail</c>
+	/// labeled alternative in <see cref="STGrammerParser.statement_case"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitStatement_case([NotNull] STGrammerParser.Statement_caseContext context);
+	Result VisitSt_case_detail([NotNull] STGrammerParser.St_case_detailContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="STGrammerParser.case_of_state"/>.
 	/// </summary>
@@ -168,6 +169,13 @@ public interface ISTGrammerVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpr_additive([NotNull] STGrammerParser.Expr_additiveContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>expr_keyword</c>
+	/// labeled alternative in <see cref="STGrammerParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpr_keyword([NotNull] STGrammerParser.Expr_keywordContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_normal_value</c>
 	/// labeled alternative in <see cref="STGrammerParser.expr"/>.
 	/// </summary>
@@ -203,11 +211,38 @@ public interface ISTGrammerVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpr_comparison_operation([NotNull] STGrammerParser.Expr_comparison_operationContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>func_named_arg</c>
+	/// labeled alternative in <see cref="STGrammerParser.func_expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunc_named_arg([NotNull] STGrammerParser.Func_named_argContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>func_operation</c>
+	/// labeled alternative in <see cref="STGrammerParser.func_expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunc_operation([NotNull] STGrammerParser.Func_operationContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>func_variable</c>
+	/// labeled alternative in <see cref="STGrammerParser.func_expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunc_variable([NotNull] STGrammerParser.Func_variableContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="STGrammerParser.variable"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitVariable([NotNull] STGrammerParser.VariableContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="STGrammerParser.keyword"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitKeyword([NotNull] STGrammerParser.KeywordContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="STGrammerParser.normal_value"/>.
 	/// </summary>
