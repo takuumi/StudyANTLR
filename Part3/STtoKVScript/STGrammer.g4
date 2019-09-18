@@ -35,7 +35,8 @@ case_of_state
 
 /* Expression */
 expr
-    : op=(PLUS|MINUS) expr                              #expr_unary
+    : op=(PLUS|MINUS) expr                                  #expr_unary
+    //todo
     | NOT func_expr                                         #expr_not
     | lhs=expr op=(PLUS|MINUS) rhs=expr                     #expr_additive
     | lhs=expr op=(ASTERISK|SLASH|POW|MOD) rhs=expr         #expr_multipricative
@@ -43,44 +44,36 @@ expr
     | lhs=expr op=(GT|LT|GE|LE) rhs=expr                    #expr_comparison_operation
     | lhs=expr op=(EQ|NEQ) rhs=expr                         #expr_equivalent_operation
     | lhs=expr ASSIGN rhs=expr                              #expr_assign
-    | expr OUTREF expr                                      #expr_outref
-    | funcname=IDENTIFIER OPEN_PAREN args+=func_expr* (COMMA args2+=func_expr)*  CLOSE_PAREN #expr_funccall
-    | MULTISTRING expr MULTISTRING                          #expr_multistring
-    | WIDESTRING expr WIDESTRING                            #expr_widestring
-    //todo
-    | keyword                                               #expr_keyword
-    | type_define                                           #expr_typedefine
-    | disp_define                                           #expr_dispdefine
-    | normal_value                                          #expr_normal_value
-    | variable                                              #expr_variable
+    | lhs=expr OUTREF rhs=expr                              #expr_outref
+    | funcname=IDENTIFIER OPEN_PAREN args+=func_expr* (COMMA args2+=func_expr)* CLOSE_PAREN  #expr_funccall
+    | reserveword                                                                            #expr_reserveword
+    | literal                                                                                #expr_literal
+    | variable                                                                               #expr_variable
     ;
 
+//todo
 func_expr
     : lhs=expr op=(ASSIGN|OUTREF) rhs=expr                         #func_named_arg
     | lhs=expr op=(AND|AND2|OR|XOR|GT|LT|GE|LE|EQ|NEQ) rhs=expr    #func_operation
     | variable                                                     #func_variable
     ;
 
-
-variable
-    : IDENTIFIER;
-
-keyword
+reserveword
     : EXIT;
 
-normal_value
-    : NUM_UINT
-    | NUM_REAL
+literal
+    : type_define                                           #expr_typedefine
+    | disp_define                                           #expr_dispdefine
+    | normal_value                                          #expr_normal_value
+    | MULTISTRING expr MULTISTRING                          #expr_multistring
+    | WIDESTRING expr WIDESTRING                            #expr_widestring
     ;
 
-// todo cast? INT#2#0011 って一体・・・
 type_define
-    : TYPE_INT NUM_UINT
-    | TYPE_UINT NUM_UINT
-    | TYPE_LREAL NUM_REAL
-    | TYPE_STRING MULTISTRING IDENTIFIER MULTISTRING
-    | TYPE_INT disp_define
-    | TYPE_UINT disp_define
+    : TYPE_INT (normal_value | disp_define)                 #type_int
+    | TYPE_UINT (normal_value | disp_define)                #type_uint
+    | TYPE_LREAL NUM_REAL                                   #type_lreal
+    | TYPE_STRING MULTISTRING (literal | variable) MULTISTRING  #type_string
     ;
 
 disp_define
@@ -88,8 +81,13 @@ disp_define
     | DISP_OCT
     | DISP_HEX;
 
+normal_value
+    : NUM_UINT
+    | NUM_REAL
+    ;
 
-
+variable
+    : IDENTIFIER;
 
 linecomment
     : SINGLE_LINE_COMMENT;

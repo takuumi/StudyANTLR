@@ -65,9 +65,17 @@ namespace TestSTtoKVScript
 
             Console.WriteLine(result1);
 
+
+
             var result2 = STtoKVScriptCore.Execute(input2);
+            Console.WriteLine(result2);
+
             var result3 = STtoKVScriptCore.Execute(input3);
+            Console.WriteLine(result3);
+       
+
             var result4 = STtoKVScriptCore.Execute(input4);
+            Console.WriteLine(result4);
 
 
             Assert.AreEqual(expect1, result1);
