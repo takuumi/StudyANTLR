@@ -86,18 +86,35 @@ public interface ISTGrammerVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStatement_return([NotNull] STGrammerParser.Statement_returnContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>st_case_detail</c>
-	/// labeled alternative in <see cref="STGrammerParser.statement_case"/>.
+	/// Visit a parse tree produced by <see cref="STGrammerParser.statement_case"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitSt_case_detail([NotNull] STGrammerParser.St_case_detailContext context);
+	Result VisitStatement_case([NotNull] STGrammerParser.Statement_caseContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="STGrammerParser.case_of_state"/>.
+	/// Visit a parse tree produced by <see cref="STGrammerParser.case_block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitCase_of_state([NotNull] STGrammerParser.Case_of_stateContext context);
+	Result VisitCase_block([NotNull] STGrammerParser.Case_blockContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="STGrammerParser.case_label"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCase_label([NotNull] STGrammerParser.Case_labelContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="STGrammerParser.case_cond"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCase_cond([NotNull] STGrammerParser.Case_condContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="STGrammerParser.else_block"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitElse_block([NotNull] STGrammerParser.Else_blockContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>expr_variable</c>
 	/// labeled alternative in <see cref="STGrammerParser.expr"/>.

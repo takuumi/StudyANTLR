@@ -23,15 +23,27 @@ statement_return
     ;
 
 /* CASE */
+/* first try
 statement_case
     : CASE expr OF (caseState+=case_of_state+ COLON blks+=block*)* (ELSE else_blks+=block*)? END_CASE SEMI_COLON #st_case_detail
     ;
-
 case_of_state
     : IDENTIFIER
     | COMMA IDENTIFIER
     | RANGE IDENTIFIER
     ;
+*/
+statement_case
+    : CASE expr OF caseblk+=case_block+ else_block? END_CASE SEMI_COLON;
+case_block: lbl+=case_label+ blk+=block*;
+case_label: case_cond (COMMA cnd2+=case_cond)* COLON;
+case_cond
+    : IDENTIFIER
+    | IDENTIFIER RANGE IDENTIFIER
+    | normal_value
+    | normal_value RANGE normal_value
+    ;
+else_block :ELSE blk+=block*;
 
 /* Expression */
 expr

@@ -250,8 +250,7 @@ namespace TestSTtoKVScript
         public void TestCaseS3_2()
         {
             string input1 = "CASE A OF \n B:\n C: D:= E; \n END_CASE; \n CASE A OF \n B, C: \n D..E: \n F,G,H..I:J:= K;\nEND_CASE;";
-
-            string expect1 = "SELECT CASE A\nCASE B,C\nD=E\nEND SELECT\nSELECT CASE A\nCASE B,C,D TO E,F,G,H TO I\nJ=K\nEND SELECT";
+            string expect1 = "SELECT CASE A\nCASE B,C\nD=E\nEND SELECT\nSELECT CASE A\nCASE B,C,D TO E,F,G,H TO I\nJ=K\nEND SELECT\n";
 
             var result1 = STtoKVScriptCore.Execute(input1);
 

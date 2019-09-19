@@ -48,63 +48,107 @@ namespace STtoKVScript
         }
 
         /* case */
-        public override Result VisitSt_case_detail([NotNull] STGrammerParser.St_case_detailContext context)
+        public override Result VisitStatement_case([NotNull] STGrammerParser.Statement_caseContext context)
         {
             string strCase = "SELECT CASE ";
             strCase += Visit(context.expr()).Info as string;
 
-            if (context.OF() != null)
+            strCase += "\nCASE ";
+            foreach (var e in context._caseblk)
             {
-                strCase += "\nCASE ";
-                foreach (var e in context._caseState)
-                {
-                    string str = Visit(e).Info as string;
-                    strCase += str;
-                }
-                strCase += "\n";
-
-                foreach (var e in context._blks)
-                {
-                    string str = Visit(e).Info as string;
-                    strCase += str;
-                    strCase += "\n";
-                }
+                string str = Visit(e).Info as string;
+                strCase += str;
             }
 
-            if (context.ELSE() != null)
+            if (context.else_block() != null)
             {
                 strCase += "CASE ELSE\n";
-                foreach (var e in context._else_blks)
-                {
-                    string str = Visit(e).Info as string;
-                    strCase += str;
-                    strCase += "\n";
-                }
+                string str = Visit(context.else_block()).Info as string;
+                strCase += str;
+                strCase += "\n";
             }
 
             strCase += "END SELECT";
             return new Result(true, strCase);
         }
 
-        public override Result VisitCase_of_state([NotNull] STGrammerParser.Case_of_stateContext context)
+        public override Result VisitCase_block([NotNull] STGrammerParser.Case_blockContext context)
         {
             string strCase = "";
-            if (context.COMMA() != null)
+
+            int iCount = 0;
+            foreach (var e in context._lbl)
+            {                
+                if(iCount != 0)
+                {
+                    strCase += ",";
+                }
+                string str = Visit(e).Info as string;
+                strCase += str;
+                iCount++;
+            }
+            strCase += "\n";
+
+            foreach (var e in context._blk)
+            {
+                string str = Visit(e).Info as string;
+                strCase += str;
+            }
+            strCase += "\n";
+
+            return new Result(true, strCase);
+
+        }
+
+        public override Result VisitCase_label([NotNull] STGrammerParser.Case_labelContext context)
+        {
+            string strCase = Visit(context.case_cond(0)).Info as string;
+
+            foreach (var e in context._cnd2)
             {
                 strCase += ",";
-
+                string str = Visit(e).Info as string;
+                strCase += str;
             }
-
-            if (context.RANGE() != null)
-            {
-                strCase += "TO ";
-            }
-
-            strCase += context.IDENTIFIER().GetText();
 
             return new Result(true, strCase);
         }
 
+        public override Result VisitCase_cond([NotNull] STGrammerParser.Case_condContext context)
+        {
+            if (context.IDENTIFIER() != null)
+            {
+                if (context.RANGE() != null )
+                {
+                    return new Result(true, context.IDENTIFIER(0).GetText() + " TO " + context.IDENTIFIER(1).GetText());
+                }
+                return new Result(true, context.IDENTIFIER(0).GetText());
+
+            } else
+            { 
+                string str = Visit(context.normal_value(0)).Info as string;
+                if (context.RANGE() != null)
+                {
+                    string str1 = Visit(context.normal_value(1)).Info as string;
+                    str = str + " TO " + str1;
+                }
+                return new Result(true, str);
+
+            }
+
+            return base.VisitCase_cond(context);
+        }
+
+        /*
+                case_block: lbl+=case_label+ blk+=block*;
+        case_cond
+            : IDENTIFIER
+            | IDENTIFIER RANGE IDENTIFIER
+            | normal_value
+            | normal_value RANGE normal_value
+            ;
+        else_block :ELSE blk+=block*;
+        */
 
         /* expression */
         public override Result VisitSt_expression([NotNull] STGrammerParser.St_expressionContext context)
