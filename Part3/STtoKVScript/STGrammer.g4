@@ -33,6 +33,8 @@ case_of_state
     | RANGE IDENTIFIER
     ;
 */
+
+/* After FB */
 statement_case
     : CASE expr OF caseblk+=case_block+ else_block? END_CASE SEMI_COLON;
 case_block: lbl+=case_label+ blk+=block*;
